@@ -224,7 +224,7 @@
           "Name": "UnpackJRE",
           "Args": {
             "Path": "C:\\setup\\jdk1.8.0_05.zip",
-            "Destination": "C:\\setup",
+            "Destination": "$env:ProgramFiles",
             "Ensure": "Present"
           },
           "Nodes": [],
@@ -240,12 +240,60 @@
           "Name": "UnpackElasticSearch",
           "Args": {
             "Path": "C:\\setup\\elasticsearch-1.1.1.zip",
-            "Destination": "C:\\setup",
+            "Destination": "$env:ProgramFiles",
             "Ensure": "Present"
           },
           "Nodes": [],
           "Requires": [
             "[Script]DownloadElasticSearch"
+          ],
+          "Description": null
+        },
+        {
+          "Type": "Environment",
+          "ImportModule": null,
+          "ImportTypeName": null,
+          "Name": "SetJavaHome",
+          "Args": {
+            "Name": "JAVA_HOME",
+            "Value": "$env:ProgramFiles\\jdk1.8.0_05\\",
+            "Ensure": "Present"
+          },
+          "Nodes": [],
+          "Requires": [
+            "[Archive]UnpackJRE"
+          ],
+          "Description": null
+        },
+        {
+          "Credential": "vmadmin",
+          "GetScript": "return @{ ServiceInstalled = Get-WmiObject -Class Win32_Service -Filter \"Name='elasticsearch-service-x64'\" }",
+          "SetScript": ".\\$env:ProgramFiles\\elasticsearch-1.1.1\\bin\\service.bat install",
+          "TestScript": "if (Get-WmiObject -Class Win32_Service -Filter \"Name='elasticsearch-service-x64'\")\r\n{Write-Verbose \"elasticsearch-service-x64 already exists.\" -Verbose\r\nreturn $true}\r\nreturn $false",
+          "Type": "Script",
+          "ImportModule": null,
+          "ImportTypeName": null,
+          "Name": "InstallElasticSearchService",
+          "Args": {},
+          "Nodes": [],
+          "Requires": [
+            "[Environment]SetJavaHome"
+          ],
+          "Description": null
+        },
+        {
+          "Type": "Service",
+          "ImportModule": null,
+          "ImportTypeName": null,
+          "Name": "ConfigureElasticSearchService",
+          "Args": {
+            "Name": "elasticsearch-service-x64",
+            "StartupType": "Automatic",
+            "State": "Running"
+          },
+          "Nodes": [],
+          "Requires": [
+            "[Script]InstallElasticSearchService"
           ],
           "Description": null
         }
