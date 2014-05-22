@@ -223,7 +223,7 @@
           "Name": "UnpackJRE",
           "Args": {
             "Path": "C:\\setup\\jdk1.8.0_05.zip",
-            "DestinationPath": "C:\\setup",
+            "Destination": "C:\\setup",
             "Ensure": "Present"
           },
           "Nodes": [],
