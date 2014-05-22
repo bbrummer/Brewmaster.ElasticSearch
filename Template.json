@@ -224,7 +224,7 @@
           "Name": "UnpackJRE",
           "Args": {
             "Path": "C:\\setup\\jdk1.8.0_05.zip",
-            "Destination": "C:\\setup",
+            "Destination": "%ProgramFiles%",
             "Ensure": "Present"
           },
           "Nodes": [],
@@ -240,7 +240,7 @@
           "Name": "UnpackElasticSearch",
           "Args": {
             "Path": "C:\\setup\\elasticsearch-1.1.1.zip",
-            "Destination": "C:\\setup",
+            "Destination": "%ProgramFiles%",
             "Ensure": "Present"
           },
           "Nodes": [],
@@ -256,7 +256,7 @@
           "Name": "SetJavaHome",
           "Args": {
             "Name": "JAVA_HOME",
-            "Value": "C:\\setup\\jdk1.8.0_05\\",
+            "Value": "%ProgramFiles%\\jdk1.8.0_05\\",
             "Ensure": "Present"
           },
           "Nodes": [],
@@ -268,7 +268,7 @@
         {
           "Credential": "vmadmin",
           "GetScript": "return @{ ServiceInstalled = Get-WmiObject -Class Win32_Service -Filter \"Name='elasticsearch-service-x64'\" }",
-          "SetScript": "C:\\setup\\elasticsearch-1.1.1\\bin\\service.bat install",
+          "SetScript": "%ProgramFiles%\\elasticsearch-1.1.1\\bin\\service.bat install",
           "TestScript": "if (Get-WmiObject -Class Win32_Service -Filter \"Name='elasticsearch-service-x64'\")\r\n{Write-Verbose \"elasticsearch-service-x64 already exists.\" -Verbose\r\nreturn $true}\r\nreturn $false",
           "Type": "Script",
           "ImportModule": null,
