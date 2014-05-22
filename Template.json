@@ -224,7 +224,7 @@
           "Name": "UnpackJRE",
           "Args": {
             "Path": "C:\\setup\\jdk1.8.0_05.zip",
-            "Destination": "$env:ProgramFiles",
+            "Destination": "C:\\setup",
             "Ensure": "Present"
           },
           "Nodes": [],
@@ -240,7 +240,7 @@
           "Name": "UnpackElasticSearch",
           "Args": {
             "Path": "C:\\setup\\elasticsearch-1.1.1.zip",
-            "Destination": "$env:ProgramFiles",
+            "Destination": "C:\\setup",
             "Ensure": "Present"
           },
           "Nodes": [],
@@ -256,7 +256,7 @@
           "Name": "SetJavaHome",
           "Args": {
             "Name": "JAVA_HOME",
-            "Value": "$env:ProgramFiles\\jdk1.8.0_05\\",
+            "Value": "C:\\setup\\jdk1.8.0_05\\",
             "Ensure": "Present"
           },
           "Nodes": [],
