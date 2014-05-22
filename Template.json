@@ -268,7 +268,7 @@
         {
           "Credential": "vmadmin",
           "GetScript": "return @{ ServiceInstalled = Get-WmiObject -Class Win32_Service -Filter \"Name='elasticsearch-service-x64'\" }",
-          "SetScript": "$env:ProgramFiles\\elasticsearch-1.1.1\\bin\\service.bat install",
+          "SetScript": "Start-Process \"$env:ProgramFiles\\elasticsearch-1.1.1\\bin\\service.bat\" \"install\"",
           "TestScript": "if (Get-WmiObject -Class Win32_Service -Filter \"Name='elasticsearch-service-x64'\")\r\n{Write-Verbose \"elasticsearch-service-x64 already exists.\" -Verbose\r\nreturn $true}\r\nreturn $false",
           "Type": "Script",
           "ImportModule": null,
@@ -278,22 +278,6 @@
           "Nodes": [],
           "Requires": [
             "[Environment]SetJavaHome"
-          ],
-          "Description": null
-        },
-        {
-          "Type": "Service",
-          "ImportModule": null,
-          "ImportTypeName": null,
-          "Name": "ConfigureElasticSearchService",
-          "Args": {
-            "Name": "elasticsearch-service-x64",
-            "StartupType": "Automatic",
-            "State": "Running"
-          },
-          "Nodes": [],
-          "Requires": [
-            "[Script]InstallElasticSearchService"
           ],
           "Description": null
         }
