@@ -1,0 +1,255 @@
+{
+  "Name": "Brewmaster.ElasticSearch",
+  "Description": "Elastic Search Farm",
+  "Parameters": [
+    {
+      "Name": "Region",
+      "Type": "String",
+      "TypeHint": "AzureRegionName",
+      "Description": "Name of Azure region."
+    },
+    {
+      "Name": "AffinityGroup",
+      "Type": "String",
+      "TypeHint": "AzureAffinityGroupName",
+      "Description": "Name of Azure affinity group."
+    },
+    {
+      "Name": "CloudService",
+      "Type": "String",
+      "TypeHint": "AzureCloudServiceName",
+      "Description": "Name of the Azure Cloud Service."
+    },
+    {
+      "Name": "DiskStore",
+      "Type": "String",
+      "TypeHint": "AzureStorageName",
+      "Description": "Name of Azure disk storage account."
+    },
+    {
+      "Name": "VMSize",
+      "Type": "String",
+      "TypeHint": "AzureRoleSize",
+      "Description": "Size of the server VMs.",
+      "Default": "Small"
+    },
+    {
+      "Name": "AdminName",
+      "Type": "String",
+      "TypeHint": "username",
+      "Description": "Name of local administrator account.",
+      "Minimum": 1.0,
+      "Maximum": 64.0
+    },
+    {
+      "Name": "AdminPassword",
+      "Type": "String",
+      "TypeHint": "password",
+      "Description": "Password of local administrator account.",
+      "MaskValue": true,
+      "Minimum": 8.0,
+      "Maximum": 127.0
+    },
+    {
+      "Name": "ServerNamePrefix",
+      "Type": "String",
+      "Description": "Name prefix for web servers.",
+      "Default": "arr",
+      "AllowedRegex": "^[a-zA-Z][a-zA-Z0-9-]{1,13}$",
+      "AllowedDescription": "Must contain 3 to 14 letters, numbers, and hyphens. Must start with a letter."
+    },
+    {
+      "Name": "NumberOfWebServers",
+      "Type": "Number",
+      "TypeHint": "integer",
+      "Description": "Number of web servers.",
+      "Default": "2",
+      "AllowedRegex": "^\\d+$",
+      "AllowedDescription": "Must enter a positive integer between 2 and 100.",
+      "Minimum": 2.0,
+      "Maximum": 100.0
+    }
+  ],
+  "Network": {
+    "DnsServers": [],
+    "LocalSites": [],
+    "VirtualSites": []
+  },
+  "AffinityGroup": {
+    "Name": "{{AffinityGroup}}",
+    "Region": "{{Region}}"
+  },
+  "StorageAccounts": [
+    {
+      "Name": "{{DiskStore}}",
+      "AffinityGroup": "{{AffinityGroup}}",
+      "Region": "{{Region}}",
+      "DisableGeoReplication": false
+    }
+  ],
+  "CloudServices": [
+    {
+      "Name": "{{CloudService}}",
+      "AffinityGroup": "{{AffinityGroup}}",
+      "Region": "{{Region}}",
+      "Description": "Brewmaster Elastic Search",
+      "Deployment": {
+        "VirtualMachines": [
+          {
+            "Name": "{{ServerNamePrefix}}",
+            "RoleSize": "{{VmSize}}",
+            "AvailabilitySet": "es-avset",
+            "OsVirtualDisk": {
+              "OsType": "Windows",
+              "OsImageName": "a699494373c04fc0bc8f2bb1389d6106__Windows-Server-2012-R2-*"
+            },
+            "WindowsConfigSet": {
+              "LocalAdminCredentialId": "vmadmin",
+              "EnableAutomaticUpdates": false,
+              "ChangePasswordAtLogon": false,
+              "DisableRdp": false
+            },
+            "ConfigSets": [
+              "ElasticSearchServer"
+            ]
+          }
+        ],
+        "DiskStorageAccount": "{{DiskStore}}",
+        "RemoveUnreferencedVms": false
+      }
+    }
+  ],
+  "DeploymentGroups": [],
+  "Credentials": [
+    {
+      "Name": "vmadmin",
+      "UserName": "{{AdminName}}",
+      "Password": "{{AdminPassword}}"
+    }
+  ],
+  "ConfigSets": [
+    {
+      "Name": "ElasticSearchServer",
+      "Description": "Elastic Search Server",
+      "Endpoints": [
+        {
+          "Name": "HTTP",
+          "LocalPort": 9200,
+          "Protocol": "tcp",
+          "Port": 9200,
+          "EnableDirectServerReturn": false,
+          "Rules": [],
+          "LoadBalancerProbe": {
+            "Name": "http",
+            "Protocol": "Http",
+            "Path": "/",
+            "IntervalInSeconds": 15,
+            "TimeoutInSeconds": 31
+          }
+        },
+        {
+          "Name": "HTTPS",
+          "LocalPort": 443,
+          "Protocol": "tcp",
+          "Port": 443,
+          "EnableDirectServerReturn": false,
+          "Rules": [],
+          "LoadBalancerProbe": {
+            "Name": "https",
+            "Protocol": "Tcp",
+            "IntervalInSeconds": 15,
+            "TimeoutInSeconds": 31
+          }
+        }
+      ],
+      "ConfigurationIds": [
+        "InstallElasticSearch"
+      ]
+    }
+  ],
+  "Configurations": [
+    {
+      "Name": "InstallElasticSearch",
+      "Resources": [
+        {
+          "Type": "Directory",
+          "ImportModule": null,
+          "ImportTypeName": null,
+          "Name": "SetupFolder",
+          "Args": {
+            "DestinationPath": "C:\\Setup",
+            "Ensure": "Present"
+          },
+          "Nodes": [],
+          "Requires": [],
+          "Description": null
+        },
+        {
+          "Credential": "vmadmin",
+          "GetScript": "return @{ JDKDownloaded = Test-Path -LiteralPath \"C:\\setup\\jdk1.8.0_05.zip\" -PathType Leaf }",
+          "SetScript": "Invoke-WebRequest 'http://apselasticsearchdev.blob.core.windows.net/brewmasterinstallers/jdk1.8.0_05.zip' -OutFile \"C:\\setup\\jdk1.8.0_05.zip\"",
+          "TestScript": "if (Test-Path -LiteralPath \"C:\\setup\\jdk1.8.0_05.zip\" -PathType Leaf)\r\n{Write-Verbose \"C:\\setup\\jdk1.8.0_05.zip already exists.\" -Verbose\r\nreturn $true}\r\nreturn $false",
+          "Type": "Script",
+          "ImportModule": null,
+          "ImportTypeName": null,
+          "Name": "DownloadJRE",
+          "Args": {},
+          "Nodes": [],
+          "Requires": [
+            "[File]SetupFolder"
+          ],
+          "Description": null
+        },
+        {
+          "Credential": "vmadmin",
+          "GetScript": "return @{ ESDownloaded = Test-Path -LiteralPath \"elasticsearch-1.1.1.zip\" -PathType Leaf }",
+          "SetScript": "Invoke-WebRequest 'https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.1.1.zip' -OutFile \"C:\\setup\\elasticsearch-1.1.1.zip\"",
+          "TestScript": "if (Test-Path -LiteralPath \"C:\\setup\\elasticsearch-1.1.1.zip\" -PathType Leaf)\r\n{Write-Verbose \"C:\\setup\\jdk1.8.0_05.zip already exists.\" -Verbose\r\nreturn $true}\r\nreturn $false",
+          "Type": "Script",
+          "ImportModule": null,
+          "ImportTypeName": null,
+          "Name": "DownloadElasticSearch",
+          "Args": {},
+          "Nodes": [],
+          "Requires": [
+            "[File]SetupFolder"
+          ],
+          "Description": null
+        },
+        {
+          "Type": "Archive",
+          "ImportModule": null,
+          "ImportTypeName": null,
+          "Name": "UnpackJRE",
+          "Args": {
+            "Path": "C:\\setup\\jdk1.8.0_05.zip",
+            "DestinationPath": "C:\\setup",
+            "Ensure": "Present"
+          },
+          "Nodes": [],
+          "Requires": [
+            "[Script]DownloadJRE"
+          ],
+          "Description": null
+        },
+        {
+          "Type": "Archive",
+          "ImportModule": null,
+          "ImportTypeName": null,
+          "Name": "UnpackElasticSearch",
+          "Args": {
+            "Path": "C:\\setup\\elasticsearch-1.1.1.zip",
+            "Destination": "C:\\setup",
+            "Ensure": "Present"
+          },
+          "Nodes": [],
+          "Requires": [
+            "[Script]DownloadElasticSearch"
+          ],
+          "Description": null
+        }
+      ],
+      "Args": {}
+    }
+  ]
+}
