@@ -172,11 +172,12 @@
       "Name": "InstallElasticSearch",
       "Resources": [
         {
-          "Type": "Directory",
+          "Type": "File",
           "ImportModule": null,
           "ImportTypeName": null,
           "Name": "SetupFolder",
           "Args": {
+            "Type": "Directory",
             "DestinationPath": "C:\\Setup",
             "Ensure": "Present"
           },
