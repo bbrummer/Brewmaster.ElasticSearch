@@ -322,7 +322,7 @@
         {
           "Credential": "vmadmin",
           "GetScript": "return @{ Installed = Test-Path -LiteralPath \"$env:ProgramFiles\\elasticsearch-1.1.1\\plugins\\head\" -PathType Container }",
-          "SetScript": "$pluginbat = \"$env:ProgramFiles\\elasticsearch-1.1.1\\bin\\plugin.bat\"\r\n$pluginbatargs = @(\"install\", \"mobz/elasticsearch-head\")\r\nWrite-Verbose \"Installing Elastic Search Head Plugin ($pluginbat $pluginbatargs)\" -Verbose\r\nStart-Process -FilePath $pluginbat -ArgumentList $pluginbatargs -UseNewEnvironment -Wait",
+          "SetScript": "$pluginbat = \"$env:ProgramFiles\\elasticsearch-1.1.1\\bin\\plugin.bat\"\r\n$pluginbatargs = @(\"-install mobz/elasticsearch-head\")\r\nWrite-Verbose \"Installing Elastic Search Head Plugin ($pluginbat $pluginbatargs)\" -Verbose\r\nStart-Process -FilePath $pluginbat -ArgumentList $pluginbatargs -UseNewEnvironment -Wait",
           "TestScript": "if (Test-Path -LiteralPath \"$env:ProgramFiles\\elasticsearch-1.1.1\\plugins\\head\" -PathType Container)\r\n{Write-Verbose \"Elastic Search Head Plugin already installed.\" -Verbose\r\nreturn $true}\r\nreturn $false",
           "Type": "Script",
           "ImportModule": null,
