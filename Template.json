@@ -274,7 +274,7 @@
         {
           "Credential": "vmadmin",
           "GetScript": "return @{ ServiceInstalled = Get-WmiObject -Class Win32_Service -Filter \"Name='elasticsearch-service-x64'\" }",
-          "SetScript": "$servicebat = \"$env:ProgramFiles\\elasticsearch-1.1.1\\bin\\service.bat\"\r\n$servicebatargs = @(\"install\")\r\nWrite-Verbose \"Installing Elastic Search Service ($servicebat $servicebatargs)\" -Verbose\r\nStart-Process -FilePath $servicebat -ArgumentList $servicebatargs -Wait",
+          "SetScript": "$servicebat = \"$env:ProgramFiles\\elasticsearch-1.1.1\\bin\\service.bat\"\r\n$servicebatargs = @(\"install\")\r\nWrite-Verbose \"Installing Elastic Search Service ($servicebat $servicebatargs)\" -Verbose\r\nStart-Process -FilePath $servicebat -ArgumentList $servicebatargs -UseNewEnvironment -Wait",
           "TestScript": "if (Get-WmiObject -Class Win32_Service -Filter \"Name='elasticsearch-service-x64'\")\r\n{Write-Verbose \"elasticsearch-service-x64 already exists.\" -Verbose\r\nreturn $true}\r\nreturn $false",
           "Type": "Script",
           "ImportModule": null,
