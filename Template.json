@@ -105,8 +105,8 @@
             },
             "DataVirtualDisks": [
               {
-                "DiskId": "datadisk",
-                "LogicalSizeInGB": 10
+                "DiskId": "disk0",
+                "LogicalSizeInGB": 40
               }
             ],
             "WindowsConfigSet": {
@@ -288,6 +288,22 @@
           "Description": null
         },
         {
+          "Credential": "vmadmin",
+          "GetScript": "return @{ Enabled = (Get-NetFirewallRule | Where-Object { $_.Name -eq 'ElasticSearch9200' }) -ne $null }",
+          "SetScript": "New-NetFirewallRule -Name ElasticSearch9200 -DisplayName \"Elastic Search Port 9200\" -Direction Inbound -LocalPort 9200 -Protocol TCP -Action Allow",
+          "TestScript": "if ((Get-NetFirewallRule | Where-Object { $_.Name -eq 'ElasticSearch9200' }) -ne $null)\r\n{Write-Verbose \"Firewall Rule ElasticSearch9200 already exists.\" -Verbose\r\nreturn $true}\r\nreturn $false",
+          "Type": "Script",
+          "ImportModule": null,
+          "ImportTypeName": null,
+          "Name": "EnableFirewallPort9200",
+          "Args": {},
+          "Nodes": [],
+          "Requires": [
+            "[Script]InstallElasticSearchService"
+          ],
+          "Description": null
+        },
+        {
           "Type": "Service",
           "ImportModule": null,
           "ImportTypeName": null,
@@ -297,6 +313,22 @@
             "StartupType": "Automatic",
             "State": "Running"
           },
+          "Nodes": [],
+          "Requires": [
+            "[Script]InstallElasticSearchService"
+          ],
+          "Description": null
+        },
+        {
+          "Credential": "vmadmin",
+          "GetScript": "return @{ Installed = Test-Path -LiteralPath \"$env:ProgramFiles\\elasticsearch-1.1.1\\plugins\\head\" -PathType Container }",
+          "SetScript": "$pluginbat = \"$env:ProgramFiles\\elasticsearch-1.1.1\\bin\\plugin.bat\"\r\n$pluginbatargs = @(\"install\", \"mobz/elasticsearch-head\")\r\nWrite-Verbose \"Installing Elastic Search Head Plugin ($pluginbat $pluginbatargs)\" -Verbose\r\nStart-Process -FilePath $pluginbat -ArgumentList $pluginbatargs -UseNewEnvironment -Wait",
+          "TestScript": "if (Test-Path -LiteralPath \"$env:ProgramFiles\\elasticsearch-1.1.1\\plugins\\head\" -PathType Container)\r\n{Write-Verbose \"Elastic Search Head Plugin already installed.\" -Verbose\r\nreturn $true}\r\nreturn $false",
+          "Type": "Script",
+          "ImportModule": null,
+          "ImportTypeName": null,
+          "Name": "InstallPluginHead",
+          "Args": {},
           "Nodes": [],
           "Requires": [
             "[Script]InstallElasticSearchService"
