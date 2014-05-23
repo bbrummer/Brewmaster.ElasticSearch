@@ -189,7 +189,7 @@ Write-Verbose ""Installing Elastic Search Head Plugin ($pluginbat $pluginbatargs
 Start-Process -FilePath $pluginbat -ArgumentList $pluginbatargs -UseNewEnvironment -Wait",
 											GetScript =
 													@"return @{ Installed = Test-Path -LiteralPath ""$env:ProgramFiles\elasticsearch-1.1.1\plugins\head"" -PathType Container }",
-											Requires = new[] {"[Script]ConfigureElasticSearchService"}
+											Requires = new[] {"[Service]ConfigureElasticSearchService"}
 										},
 								}
 						}

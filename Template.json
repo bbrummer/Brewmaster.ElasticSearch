@@ -331,7 +331,7 @@
           "Args": {},
           "Nodes": [],
           "Requires": [
-            "[Script]ConfigureElasticSearchService"
+            "[Service]ConfigureElasticSearchService"
           ],
           "Description": null
         }
