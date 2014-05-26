@@ -200,9 +200,9 @@ return $true}
 return $false",
 											SetScript =
 													@"$pluginbat = ""$env:ProgramFiles\elasticsearch-1.1.1\bin\plugin.bat""
-$pluginbatargs = @(""-install mobz/elasticsearch-head"")
+$pluginbatargs = @(""-install mobz/elasticsearch-head -verbose"")
 Write-Verbose ""Installing Elastic Search Head Plugin ($pluginbat $pluginbatargs)"" -Verbose
-Start-Process -FilePath $pluginbat -ArgumentList $pluginbatargs -UseNewEnvironment -LoadUserProfile -Wait -RedirectStandardOutput c:\setup\stdout.txt -RedirectStandardError c:\setup\stderr.txt",
+Start-Process -FilePath $pluginbat -ArgumentList $pluginbatargs -UseNewEnvironment -LoadUserProfile -Wait -RedirectStandardOutput c:\setup\headpluginlog.txt",
 											GetScript =
 													@"return @{ Installed = Test-Path -LiteralPath ""$env:ProgramFiles\elasticsearch-1.1.1\plugins\head"" -PathType Container }",
 											Requires = new[] {"[Service]ConfigureElasticSearchService"}
@@ -218,9 +218,9 @@ return $true}
 return $false",
 											SetScript =
 													@"$pluginbat = ""$env:ProgramFiles\elasticsearch-1.1.1\bin\plugin.bat""
-$pluginbatargs = @(""-install elasticsearch/elasticsearch-cloud-azure/2.1.0"")
+$pluginbatargs = @(""-install elasticsearch/elasticsearch-cloud-azure/2.1.0 -verbose"")
 Write-Verbose ""Installing Elastic Search Azure Plugin ($pluginbat $pluginbatargs)"" -Verbose
-Start-Process -FilePath $pluginbat -ArgumentList $pluginbatargs -UseNewEnvironment -LoadUserProfile -Wait -RedirectStandardOutput c:\setup\stdout.txt -RedirectStandardError c:\setup\stderr.txt",
+Start-Process -FilePath $pluginbat -ArgumentList $pluginbatargs -UseNewEnvironment -LoadUserProfile -Wait -RedirectStandardOutput c:\setup\azurepluginlog.txt",
 											GetScript =
 													@"return @{ Installed = Test-Path -LiteralPath ""$env:ProgramFiles\elasticsearch-1.1.1\plugins\cloud-azure"" -PathType Container }",
 											Requires = new[] {"[Service]ConfigureElasticSearchService"}
