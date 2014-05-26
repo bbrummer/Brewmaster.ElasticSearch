@@ -78,7 +78,7 @@ return $false",
 Invoke-WebRequest 'http://apselasticsearchdev.blob.core.windows.net/brewmasterinstallers/jdk1.8.0_05.zip' -OutFile ""C:\setup\jdk1.8.0_05.zip"""
 											,
 											GetScript =
-													@"return @{ JDKDownloaded = Test-Path -LiteralPath ""C:\setup\jdk1.8.0_05.zip"" -PathType Leaf }",
+													@"return @{ Downloaded = Test-Path -LiteralPath ""C:\setup\jdk1.8.0_05.zip"" -PathType Leaf }",
 											Requires = new[] {"[File]SetupFolder"}
 										},
 								new ScriptResource
@@ -94,7 +94,39 @@ return $false",
 													@"Invoke-WebRequest 'https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.1.1.zip' -OutFile ""C:\setup\elasticsearch-1.1.1.zip"""
 											,
 											GetScript =
-													@"return @{ ESDownloaded = Test-Path -LiteralPath ""elasticsearch-1.1.1.zip"" -PathType Leaf }",
+													@"return @{ Downloaded = Test-Path -LiteralPath ""C:\setup\elasticsearch-1.1.1.zip"" -PathType Leaf }",
+											Requires = new[] {"[File]SetupFolder"}
+										},
+								new ScriptResource
+                                        {
+                                            Name = "DownloadPluginHead",
+                                            Credential = "vmadmin",
+											TestScript =
+													@"if (Test-Path -LiteralPath ""C:\setup\elasticsearch-head-master.zip"" -PathType Leaf)
+{Write-Verbose ""C:\setup\elasticsearch-head-master.zip already exists."" -Verbose
+return $true}
+return $false",
+											SetScript =
+													@"Invoke-WebRequest 'https://github.com/mobz/elasticsearch-head/archive/master.zip' -OutFile ""C:\setup\elasticsearch-head-master.zip"""
+											,
+											GetScript =
+													@"return @{ Downloaded = Test-Path -LiteralPath ""C:\setup\elasticsearch-head-master.zip"" -PathType Leaf }",
+											Requires = new[] {"[File]SetupFolder"}
+										},
+								new ScriptResource
+                                        {
+                                            Name = "DownloadPluginAzure",
+                                            Credential = "vmadmin",
+											TestScript =
+													@"if (Test-Path -LiteralPath ""C:\setup\elasticsearch-cloud-azure-2.1.0.zip"" -PathType Leaf)
+{Write-Verbose ""C:\setup\elasticsearch-cloud-azure-2.1.0.zip already exists."" -Verbose
+return $true}
+return $false",
+											SetScript =
+													@"Invoke-WebRequest 'http://download.elasticsearch.org/elasticsearch/elasticsearch-cloud-azure/elasticsearch-cloud-azure-2.1.0.zip' -OutFile ""C:\setup\elasticsearch-cloud-azure-2.1.0.zip"""
+											,
+											GetScript =
+													@"return @{ Downloaded = Test-Path -LiteralPath ""C:\setup\elasticsearch-cloud-azure-2.1.0.zip"" -PathType Leaf }",
 											Requires = new[] {"[File]SetupFolder"}
 										},
 								new GenericResource("Archive")
@@ -200,9 +232,9 @@ return $true}
 return $false",
 											SetScript =
 													@"$pluginbat = ""$env:ProgramFiles\elasticsearch-1.1.1\bin\plugin.bat""
-$pluginbatargs = @(""-install mobz/elasticsearch-head -verbose"")
+$pluginbatargs = @(""-install mobz/elasticsearch-head -url file:///c:\Setup\elasticsearch-head-master.zip -verbose"")
 Write-Verbose ""Installing Elastic Search Head Plugin ($pluginbat $pluginbatargs)"" -Verbose
-Start-Process -FilePath $pluginbat -ArgumentList $pluginbatargs -UseNewEnvironment -LoadUserProfile -Wait -RedirectStandardOutput c:\setup\headpluginlog.txt",
+Start-Process -FilePath $pluginbat -ArgumentList $pluginbatargs -UseNewEnvironment -Wait -RedirectStandardOutput c:\setup\headpluginlog.txt",
 											GetScript =
 													@"return @{ Installed = Test-Path -LiteralPath ""$env:ProgramFiles\elasticsearch-1.1.1\plugins\head"" -PathType Container }",
 											Requires = new[] {"[Service]ConfigureElasticSearchService"}
@@ -218,7 +250,7 @@ return $true}
 return $false",
 											SetScript =
 													@"$pluginbat = ""$env:ProgramFiles\elasticsearch-1.1.1\bin\plugin.bat""
-$pluginbatargs = @(""-install elasticsearch/elasticsearch-cloud-azure/2.1.0 -verbose"")
+$pluginbatargs = @(""-install elasticsearch/elasticsearch-cloud-azure/2.1.0 -url file:///c:\Setup\elasticsearch-cloud-azure-2.1.0.zip -verbose"")
 Write-Verbose ""Installing Elastic Search Azure Plugin ($pluginbat $pluginbatargs)"" -Verbose
 Start-Process -FilePath $pluginbat -ArgumentList $pluginbatargs -UseNewEnvironment -LoadUserProfile -Wait -RedirectStandardOutput c:\setup\azurepluginlog.txt",
 											GetScript =
