@@ -74,7 +74,8 @@ void Main()
 return $true}
 return $false",
 											SetScript =
-													@"Invoke-WebRequest 'http://apselasticsearchdev.blob.core.windows.net/brewmasterinstallers/jdk1.8.0_05.zip' -OutFile ""C:\setup\jdk1.8.0_05.zip"""
+													@"Write-Verbose ""Downloading JRE. This can take around 20 mins."" -Verbose
+Invoke-WebRequest 'http://apselasticsearchdev.blob.core.windows.net/brewmasterinstallers/jdk1.8.0_05.zip' -OutFile ""C:\setup\jdk1.8.0_05.zip"""
 											,
 											GetScript =
 													@"return @{ JDKDownloaded = Test-Path -LiteralPath ""C:\setup\jdk1.8.0_05.zip"" -PathType Leaf }",
@@ -186,7 +187,7 @@ return $false",
 													@"$pluginbat = ""$env:ProgramFiles\elasticsearch-1.1.1\bin\plugin.bat""
 $pluginbatargs = @(""-install mobz/elasticsearch-head"")
 Write-Verbose ""Installing Elastic Search Head Plugin ($pluginbat $pluginbatargs)"" -Verbose
-Start-Process -FilePath $pluginbat -ArgumentList $pluginbatargs -UseNewEnvironment -Wait",
+Start-Process -FilePath $pluginbat -ArgumentList $pluginbatargs -UseNewEnvironment -LoadUserProfile -Wait",
 											GetScript =
 													@"return @{ Installed = Test-Path -LiteralPath ""$env:ProgramFiles\elasticsearch-1.1.1\plugins\head"" -PathType Container }",
 											Requires = new[] {"[Service]ConfigureElasticSearchService"}
