@@ -1,6 +1,7 @@
 {
   "Name": "Brewmaster.ElasticSearch",
   "Description": "Elastic Search Farm",
+  "Version": "0.1.0",
   "Parameters": [
     {
       "Name": "Region",
