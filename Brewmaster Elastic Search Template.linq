@@ -163,6 +163,21 @@ return $false",
 													@"return @{ Enabled = (Get-NetFirewallRule | Where-Object { $_.Name -eq 'ElasticSearch9200' }) -ne $null }",
 											Requires = new[] {"[Script]InstallElasticSearchService"}
 										},
+								new ScriptResource
+                                        {
+                                            Name = "EnableFirewallPort9300",
+                                            Credential = "vmadmin",
+											TestScript =
+													@"if ((Get-NetFirewallRule | Where-Object { $_.Name -eq 'ElasticSearch9300' }) -ne $null)
+{Write-Verbose ""Firewall Rule ElasticSearch9300 already exists."" -Verbose
+return $true}
+return $false",
+											SetScript =
+													@"New-NetFirewallRule -Name ElasticSearch9300 -DisplayName ""Elastic Search Port 9300"" -Direction Inbound -LocalPort 9300 -Protocol TCP -Action Allow",
+											GetScript =
+													@"return @{ Enabled = (Get-NetFirewallRule | Where-Object { $_.Name -eq 'ElasticSearch9300' }) -ne $null }",
+											Requires = new[] {"[Script]InstallElasticSearchService"}
+										},
 								new GenericResource("Service")
 										{
 											Name = "ConfigureElasticSearchService",
@@ -190,6 +205,24 @@ Write-Verbose ""Installing Elastic Search Head Plugin ($pluginbat $pluginbatargs
 Start-Process -FilePath $pluginbat -ArgumentList $pluginbatargs -UseNewEnvironment -LoadUserProfile -Wait",
 											GetScript =
 													@"return @{ Installed = Test-Path -LiteralPath ""$env:ProgramFiles\elasticsearch-1.1.1\plugins\head"" -PathType Container }",
+											Requires = new[] {"[Service]ConfigureElasticSearchService"}
+										},
+								new ScriptResource
+                                        {
+                                            Name = "InstallPluginAzure",
+                                            Credential = "vmadmin",
+											TestScript =
+													@"if (Test-Path -LiteralPath ""$env:ProgramFiles\elasticsearch-1.1.1\plugins\cloud-azure"" -PathType Container)
+{Write-Verbose ""Elastic Search Head Plugin already installed."" -Verbose
+return $true}
+return $false",
+											SetScript =
+													@"$pluginbat = ""$env:ProgramFiles\elasticsearch-1.1.1\bin\plugin.bat""
+$pluginbatargs = @(""-install elasticsearch/elasticsearch-cloud-azure/2.1.0"")
+Write-Verbose ""Installing Elastic Search Azure Plugin ($pluginbat $pluginbatargs)"" -Verbose
+Start-Process -FilePath $pluginbat -ArgumentList $pluginbatargs -UseNewEnvironment -LoadUserProfile -Wait",
+											GetScript =
+													@"return @{ Installed = Test-Path -LiteralPath ""$env:ProgramFiles\elasticsearch-1.1.1\plugins\cloud-azure"" -PathType Container }",
 											Requires = new[] {"[Service]ConfigureElasticSearchService"}
 										},
 								}
