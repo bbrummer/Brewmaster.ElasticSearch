@@ -55,7 +55,7 @@
       "Name": "ServerNamePrefix",
       "Type": "String",
       "Description": "Name prefix for web servers.",
-      "Default": "es",
+      "Default": "esn",
       "AllowedRegex": "^[a-zA-Z][a-zA-Z0-9-]{1,13}$",
       "AllowedDescription": "Must contain 3 to 14 letters, numbers, and hyphens. Must start with a letter."
     },

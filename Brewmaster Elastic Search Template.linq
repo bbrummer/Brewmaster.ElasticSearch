@@ -322,7 +322,7 @@ return $false",
                                "password",
                                p => p.WithLimits(8, 127), maskValue: true)
                 .WithParameter("ServerNamePrefix", ParameterType.String, "Name prefix for web servers.",
-                               p => p.WithDefaultValue("es")
+                               p => p.WithDefaultValue("esn")
                                      .WithRegexValidation(@"^[a-zA-Z][a-zA-Z0-9-]{1,13}$",
                                                           "Must contain 3 to 14 letters, numbers, and hyphens. Must start with a letter."))
 				.WithParameter("AzureCertificateUrl", ParameterType.String, "URL to Azure certificate.",
