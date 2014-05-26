@@ -175,7 +175,7 @@ return $false",
 													@"$servicebat = ""$env:ProgramFiles\elasticsearch-1.1.1\bin\service.bat""
 $servicebatargs = @(""install"")
 Write-Verbose ""Installing Elastic Search Service ($servicebat $servicebatargs)"" -Verbose
-Start-Process -FilePath $servicebat -ArgumentList $servicebatargs -UseNewEnvironment -Wait",
+Start-Process -FilePath $servicebat -ArgumentList $servicebatargs -UseNewEnvironment -Wait -RedirectStandardOutput $env:BrewmasterDir\Logs\elasticsearchservice.log",
 											GetScript =
 													@"return @{ ServiceInstalled = Get-WmiObject -Class Win32_Service -Filter ""Name='elasticsearch-service-x64'"" }",
 											Requires = new[] {"[Environment]SetJavaHome"}
@@ -210,17 +210,6 @@ return $false",
 													@"return @{ Enabled = (Get-NetFirewallRule | Where-Object { $_.Name -eq 'ElasticSearch9300' }) -ne $null }",
 											Requires = new[] {"[Script]InstallElasticSearchService"}
 										},
-								new GenericResource("Service")
-										{
-											Name = "ConfigureElasticSearchService",
-											Args = new Dictionary<string, string>
-                                                {
-													{"Name" , "elasticsearch-service-x64"},
-													{"StartupType" , "Automatic"},
-													{"State" , "Running"}
-												},
-  											Requires = new[] {"[Script]InstallElasticSearchService"}
-										},
 								new ScriptResource
                                         {
                                             Name = "InstallPluginHead",
@@ -234,7 +223,7 @@ return $false",
 													@"$pluginbat = ""$env:ProgramFiles\elasticsearch-1.1.1\bin\plugin.bat""
 $pluginbatargs = @(""-install mobz/elasticsearch-head -url file:///c:\Setup\elasticsearch-head-master.zip -verbose"")
 Write-Verbose ""Installing Elastic Search Head Plugin ($pluginbat $pluginbatargs)"" -Verbose
-Start-Process -FilePath $pluginbat -ArgumentList $pluginbatargs -UseNewEnvironment -Wait -RedirectStandardOutput c:\setup\headpluginlog.txt",
+Start-Process -FilePath $pluginbat -ArgumentList $pluginbatargs -UseNewEnvironment -Wait -RedirectStandardOutput $env:BrewmasterDir\Logs\headpluginlog.log",
 											GetScript =
 													@"return @{ Installed = Test-Path -LiteralPath ""$env:ProgramFiles\elasticsearch-1.1.1\plugins\head"" -PathType Container }",
 											Requires = new[] {"[Service]ConfigureElasticSearchService"}
@@ -252,10 +241,51 @@ return $false",
 													@"$pluginbat = ""$env:ProgramFiles\elasticsearch-1.1.1\bin\plugin.bat""
 $pluginbatargs = @(""-install elasticsearch/elasticsearch-cloud-azure/2.1.0 -url file:///c:\Setup\elasticsearch-cloud-azure-2.1.0.zip -verbose"")
 Write-Verbose ""Installing Elastic Search Azure Plugin ($pluginbat $pluginbatargs)"" -Verbose
-Start-Process -FilePath $pluginbat -ArgumentList $pluginbatargs -UseNewEnvironment -LoadUserProfile -Wait -RedirectStandardOutput c:\setup\azurepluginlog.txt",
+Start-Process -FilePath $pluginbat -ArgumentList $pluginbatargs -UseNewEnvironment -LoadUserProfile -Wait -RedirectStandardOutput $env:BrewmasterDir\Logs\azurepluginlog.log",
 											GetScript =
 													@"return @{ Installed = Test-Path -LiteralPath ""$env:ProgramFiles\elasticsearch-1.1.1\plugins\cloud-azure"" -PathType Container }",
 											Requires = new[] {"[Service]ConfigureElasticSearchService"}
+										},
+								new ScriptResource
+                                        {
+                                            Name = "UpdateConfigCloud",
+                                            Credential = "vmadmin",
+											TestScript =
+													@"if (Select-String -path ""$env:ProgramFiles\elasticsearch-1.1.1\config\elasticsearch.yml"" -pattern ""cloud:"" -allmatches -simplematch -quiet)
+{Write-Verbose ""Elastic Search Config already has Cloud settings"" -Verbose
+return $true}
+return $false",
+											SetScript =
+													@"Add-Content ""$env:ProgramFiles\elasticsearch-1.1.1\config\elasticsearch.yml"" ""`ncloud:`n`tazure:`n`t`tkeystore: /home/elasticsearch/azurekeystore.pkcs12`n`t`tpassword: your_password_for_keystore`n`t`tsubscription_id: your_azure_subscription_id`n`t`tservice_name: {{CloudService}}`n`t""",
+											GetScript =
+													@"return @{ Configured = Select-String -path ""$env:ProgramFiles\elasticsearch-1.1.1\config\elasticsearch.yml"" -pattern ""cloud:"" -allmatches -simplematch -quiet }",
+											Requires = new[] {"[Script]InstallPluginAzure"}
+										},
+								new ScriptResource
+                                        {
+                                            Name = "UpdateConfigDiscovery",
+                                            Credential = "vmadmin",
+											TestScript =
+													@"if (Select-String -path ""$env:ProgramFiles\elasticsearch-1.1.1\config\elasticsearch.yml"" -pattern ""discovery:"" -allmatches -simplematch -quiet)
+{Write-Verbose ""Elastic Search Config already has Discovery settings"" -Verbose
+return $true}
+return $false",
+											SetScript =
+													@"Add-Content ""$env:ProgramFiles\elasticsearch-1.1.1\config\elasticsearch.yml"" ""`ndiscovery:`n`t`ttype: azure""",
+											GetScript =
+													@"return @{ Configured = Select-String -path ""$env:ProgramFiles\elasticsearch-1.1.1\config\elasticsearch.yml"" -pattern ""cloud:"" -allmatches -simplematch -quiet }",
+											Requires = new[] {"[Script]InstallPluginAzure"}
+										},
+								new GenericResource("Service")
+										{
+											Name = "ConfigureElasticSearchService",
+											Args = new Dictionary<string, string>
+                                                {
+													{"Name" , "elasticsearch-service-x64"},
+													{"StartupType" , "Automatic"},
+													{"State" , "Running"}
+												},
+  											Requires = new[] {"[Script]InstallElasticSearchService"}
 										},
 								}
 						}

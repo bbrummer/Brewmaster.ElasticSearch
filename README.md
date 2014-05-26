@@ -11,9 +11,12 @@ This Brewmaster template sets up a ElasticSearch cluster with minimum effort on 
 5. Elasticsearch Head Plugin is installed to provide a dashboard.
 6. Firewall rules are addded to open ports 9200 and 9300
 
+###Note
+This template uses a cached copy of JRE, please ensure you read the [JRE usage terms] (http://www.oracle.com/technetwork/java/javase/terms/license/index.html)
+
 ###References
 Please refer to the following links for more information.
 > - [Elastic Search](http://www.elasticsearch.org/)
 > - [Azure Cloud Plugin for Elasticsearch](https://github.com/elasticsearch/elasticsearch-cloud-azure)
 > - [elasticsearch-head](https://github.com/mobz/elasticsearch-head)
-
+> - [Server JRE] (http://www.oracle.com/technetwork/java/javase/downloads/server-jre8-downloads-2133154.html)
