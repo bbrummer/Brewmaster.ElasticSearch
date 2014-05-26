@@ -338,7 +338,7 @@
         {
           "Credential": "vmadmin",
           "GetScript": "return @{ Installed = Test-Path -LiteralPath \"$env:ProgramFiles\\elasticsearch-1.1.1\\plugins\\head\" -PathType Container }",
-          "SetScript": "$pluginbat = \"$env:ProgramFiles\\elasticsearch-1.1.1\\bin\\plugin.bat\"\r\n$pluginbatargs = @(\"-install mobz/elasticsearch-head\")\r\nWrite-Verbose \"Installing Elastic Search Head Plugin ($pluginbat $pluginbatargs)\" -Verbose\r\nStart-Process -FilePath $pluginbat -ArgumentList $pluginbatargs -UseNewEnvironment -LoadUserProfile -Wait",
+          "SetScript": "$pluginbat = \"$env:ProgramFiles\\elasticsearch-1.1.1\\bin\\plugin.bat\"\r\n$pluginbatargs = @(\"-install mobz/elasticsearch-head\")\r\nWrite-Verbose \"Installing Elastic Search Head Plugin ($pluginbat $pluginbatargs)\" -Verbose\r\nStart-Process -FilePath $pluginbat -ArgumentList $pluginbatargs -UseNewEnvironment -LoadUserProfile -Wait -RedirectStandardOutput c:\\setup\\stdout.txt -RedirectStandardError c:\\setup\\stderr.txt",
           "TestScript": "if (Test-Path -LiteralPath \"$env:ProgramFiles\\elasticsearch-1.1.1\\plugins\\head\" -PathType Container)\r\n{Write-Verbose \"Elastic Search Head Plugin already installed.\" -Verbose\r\nreturn $true}\r\nreturn $false",
           "Type": "Script",
           "ImportModule": null,
@@ -354,7 +354,7 @@
         {
           "Credential": "vmadmin",
           "GetScript": "return @{ Installed = Test-Path -LiteralPath \"$env:ProgramFiles\\elasticsearch-1.1.1\\plugins\\cloud-azure\" -PathType Container }",
-          "SetScript": "$pluginbat = \"$env:ProgramFiles\\elasticsearch-1.1.1\\bin\\plugin.bat\"\r\n$pluginbatargs = @(\"-install elasticsearch/elasticsearch-cloud-azure/2.1.0\")\r\nWrite-Verbose \"Installing Elastic Search Azure Plugin ($pluginbat $pluginbatargs)\" -Verbose\r\nStart-Process -FilePath $pluginbat -ArgumentList $pluginbatargs -UseNewEnvironment -LoadUserProfile -Wait",
+          "SetScript": "$pluginbat = \"$env:ProgramFiles\\elasticsearch-1.1.1\\bin\\plugin.bat\"\r\n$pluginbatargs = @(\"-install elasticsearch/elasticsearch-cloud-azure/2.1.0\")\r\nWrite-Verbose \"Installing Elastic Search Azure Plugin ($pluginbat $pluginbatargs)\" -Verbose\r\nStart-Process -FilePath $pluginbat -ArgumentList $pluginbatargs -UseNewEnvironment -LoadUserProfile -Wait -RedirectStandardOutput c:\\setup\\stdout.txt -RedirectStandardError c:\\setup\\stderr.txt",
           "TestScript": "if (Test-Path -LiteralPath \"$env:ProgramFiles\\elasticsearch-1.1.1\\plugins\\cloud-azure\" -PathType Container)\r\n{Write-Verbose \"Elastic Search Head Plugin already installed.\" -Verbose\r\nreturn $true}\r\nreturn $false",
           "Type": "Script",
           "ImportModule": null,
