@@ -129,6 +129,22 @@ return $false",
 													@"return @{ Downloaded = Test-Path -LiteralPath ""C:\setup\elasticsearch-cloud-azure-2.1.0.zip"" -PathType Leaf }",
 											Requires = new[] {"[File]SetupFolder"}
 										},
+								new ScriptResource
+                                        {
+                                            Name = "DownloadCertificate",
+                                            Credential = "vmadmin",
+											TestScript =
+													@"if (Test-Path -LiteralPath ""C:\setup\azurecert.pfx"" -PathType Leaf)
+{Write-Verbose ""C:\setup\elasticsearch-cloud-azure-2.1.0.zip already exists."" -Verbose
+return $true}
+return $false",
+											SetScript =
+													@"Invoke-WebRequest '{{AzureCertificateUrl}}' -OutFile ""C:\setup\azurecert.pfx"""
+											,
+											GetScript =
+													@"return @{ Downloaded = Test-Path -LiteralPath ""C:\setup\azurecert.pfx"" -PathType Leaf }",
+											Requires = new[] {"[File]SetupFolder"}
+										},
 								new GenericResource("Archive")
 										{
 											Name = "UnpackJRE",
@@ -256,7 +272,7 @@ Start-Process -FilePath $pluginbat -ArgumentList $pluginbatargs -UseNewEnvironme
 return $true}
 return $false",
 											SetScript =
-													@"Add-Content ""$env:ProgramFiles\elasticsearch-1.1.1\config\elasticsearch.yml"" ""`ncloud:`n`tazure:`n`t`tkeystore: /home/elasticsearch/azurekeystore.pkcs12`n`t`tpassword: your_password_for_keystore`n`t`tsubscription_id: your_azure_subscription_id`n`t`tservice_name: {{CloudService}}`n`t""",
+													@"Add-Content ""$env:ProgramFiles\elasticsearch-1.1.1\config\elasticsearch.yml"" ""`ncloud:`n`tazure:`n`t`tkeystore: C:\Setup\azurecert.pfx`n`t`tpassword: {{AzureCertificatePassword}}`n`t`tsubscription_id: {{AzureSubscriptionId}}`n`t`tservice_name: {{CloudService}}`n`t""",
 											GetScript =
 													@"return @{ Configured = Select-String -path ""$env:ProgramFiles\elasticsearch-1.1.1\config\elasticsearch.yml"" -pattern ""cloud:"" -allmatches -simplematch -quiet }",
 											Requires = new[] {"[Script]InstallPluginAzure"}
@@ -309,6 +325,15 @@ return $false",
                                p => p.WithDefaultValue("es")
                                      .WithRegexValidation(@"^[a-zA-Z][a-zA-Z0-9-]{1,13}$",
                                                           "Must contain 3 to 14 letters, numbers, and hyphens. Must start with a letter."))
+				.WithParameter("AzureCertificateUrl", ParameterType.String, "URL to Azure certificate.",
+                               "url",
+                               p => p.WithLimits(8, 127))
+				.WithParameter("AzureCertificatePassword", ParameterType.String, "Password for the certificate file.",
+                               "password",
+                               p => p.WithLimits(8, 127), maskValue: true)										  
+				.WithParameter("AzureSubscriptionId", ParameterType.String, "Subscription Id.",
+                               "guid",
+                               p => p.WithLimits(8, 127))			
                 .WithParameter("NumberOfWebServers", ParameterType.Number, "Number of web servers.", "integer",
                                p => p.WithDefaultValue("2")
                                      .WithLimits(2, 100)

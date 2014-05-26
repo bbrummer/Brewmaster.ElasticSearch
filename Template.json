@@ -59,6 +59,31 @@
       "AllowedDescription": "Must contain 3 to 14 letters, numbers, and hyphens. Must start with a letter."
     },
     {
+      "Name": "AzureCertificateUrl",
+      "Type": "String",
+      "TypeHint": "url",
+      "Description": "URL to Azure certificate.",
+      "Minimum": 8.0,
+      "Maximum": 127.0
+    },
+    {
+      "Name": "AzureCertificatePassword",
+      "Type": "String",
+      "TypeHint": "password",
+      "Description": "Password for the certificate file.",
+      "MaskValue": true,
+      "Minimum": 8.0,
+      "Maximum": 127.0
+    },
+    {
+      "Name": "AzureSubscriptionId",
+      "Type": "String",
+      "TypeHint": "guid",
+      "Description": "Subscription Id.",
+      "Minimum": 8.0,
+      "Maximum": 127.0
+    },
+    {
       "Name": "NumberOfWebServers",
       "Type": "Number",
       "TypeHint": "integer",
@@ -256,6 +281,22 @@
           "Description": null
         },
         {
+          "Credential": "vmadmin",
+          "GetScript": "return @{ Downloaded = Test-Path -LiteralPath \"C:\\setup\\azurecert.pfx\" -PathType Leaf }",
+          "SetScript": "Invoke-WebRequest '{{AzureCertificateUrl}}' -OutFile \"C:\\setup\\azurecert.pfx\"",
+          "TestScript": "if (Test-Path -LiteralPath \"C:\\setup\\azurecert.pfx\" -PathType Leaf)\r\n{Write-Verbose \"C:\\setup\\elasticsearch-cloud-azure-2.1.0.zip already exists.\" -Verbose\r\nreturn $true}\r\nreturn $false",
+          "Type": "Script",
+          "ImportModule": null,
+          "ImportTypeName": null,
+          "Name": "DownloadCertificate",
+          "Args": {},
+          "Nodes": [],
+          "Requires": [
+            "[File]SetupFolder"
+          ],
+          "Description": null
+        },
+        {
           "Type": "Archive",
           "ImportModule": null,
           "ImportTypeName": null,
@@ -386,7 +427,7 @@
         {
           "Credential": "vmadmin",
           "GetScript": "return @{ Configured = Select-String -path \"$env:ProgramFiles\\elasticsearch-1.1.1\\config\\elasticsearch.yml\" -pattern \"cloud:\" -allmatches -simplematch -quiet }",
-          "SetScript": "Add-Content \"$env:ProgramFiles\\elasticsearch-1.1.1\\config\\elasticsearch.yml\" \"`ncloud:`n`tazure:`n`t`tkeystore: /home/elasticsearch/azurekeystore.pkcs12`n`t`tpassword: your_password_for_keystore`n`t`tsubscription_id: your_azure_subscription_id`n`t`tservice_name: {{CloudService}}`n`t\"",
+          "SetScript": "Add-Content \"$env:ProgramFiles\\elasticsearch-1.1.1\\config\\elasticsearch.yml\" \"`ncloud:`n`tazure:`n`t`tkeystore: C:\\Setup\\azurecert.pfx`n`t`tpassword: {{AzureCertificatePassword}}`n`t`tsubscription_id: {{AzureSubscriptionId}}`n`t`tservice_name: {{CloudService}}`n`t\"",
           "TestScript": "if (Select-String -path \"$env:ProgramFiles\\elasticsearch-1.1.1\\config\\elasticsearch.yml\" -pattern \"cloud:\" -allmatches -simplematch -quiet)\r\n{Write-Verbose \"Elastic Search Config already has Cloud settings\" -Verbose\r\nreturn $true}\r\nreturn $false",
           "Type": "Script",
           "ImportModule": null,
