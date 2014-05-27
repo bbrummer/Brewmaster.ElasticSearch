@@ -301,7 +301,7 @@ return $false",
 													{"StartupType" , "Automatic"},
 													{"State" , "Running"}
 												},
-  											Requires = new[] {"[Script]InstallElasticSearchService"}
+  											Requires = new[] {"[Script]UpdateConfigDiscovery"}
 										},
 								}
 						}

@@ -494,7 +494,7 @@
           },
           "Nodes": [],
           "Requires": [
-            "[Script]InstallElasticSearchService"
+            "[Script]UpdateConfigDiscovery"
           ],
           "Description": null
         }
