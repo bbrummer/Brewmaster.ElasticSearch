@@ -118,15 +118,15 @@ return $false",
                                             Name = "DownloadPluginAzure",
                                             Credential = "vmadmin",
 											TestScript =
-													@"if (Test-Path -LiteralPath ""C:\setup\elasticsearch-cloud-azure-2.1.0.zip"" -PathType Leaf)
-{Write-Verbose ""C:\setup\elasticsearch-cloud-azure-2.1.0.zip already exists."" -Verbose
+													@"if (Test-Path -LiteralPath ""C:\setup\elasticsearch-cloud-azure-2.2.0.zip"" -PathType Leaf)
+{Write-Verbose ""C:\setup\elasticsearch-cloud-azure-2.2.0.zip already exists."" -Verbose
 return $true}
 return $false",
 											SetScript =
-													@"Invoke-WebRequest 'http://download.elasticsearch.org/elasticsearch/elasticsearch-cloud-azure/elasticsearch-cloud-azure-2.1.0.zip' -OutFile ""C:\setup\elasticsearch-cloud-azure-2.1.0.zip"""
+													@"Invoke-WebRequest 'https://github.com/elasticsearch/elasticsearch-cloud-azure/archive/es-1.1.zip' -OutFile ""C:\setup\elasticsearch-cloud-azure-2.2.0.zip"""
 											,
 											GetScript =
-													@"return @{ Downloaded = Test-Path -LiteralPath ""C:\setup\elasticsearch-cloud-azure-2.1.0.zip"" -PathType Leaf }",
+													@"return @{ Downloaded = Test-Path -LiteralPath ""C:\setup\elasticsearch-cloud-azure-2.2.0.zip"" -PathType Leaf }",
 											Requires = new[] {"[File]SetupFolder"}
 										},
 								new ScriptResource
@@ -135,7 +135,7 @@ return $false",
                                             Credential = "vmadmin",
 											TestScript =
 													@"if (Test-Path -LiteralPath ""C:\setup\azurecert.pfx"" -PathType Leaf)
-{Write-Verbose ""C:\setup\elasticsearch-cloud-azure-2.1.0.zip already exists."" -Verbose
+{Write-Verbose ""C:\setup\azurecert.pfx already exists."" -Verbose
 return $true}
 return $false",
 											SetScript =
@@ -255,7 +255,7 @@ return $true}
 return $false",
 											SetScript =
 													@"$pluginbat = ""$env:ProgramFiles\elasticsearch-1.1.1\bin\plugin.bat""
-$pluginbatargs = @(""-install elasticsearch/elasticsearch-cloud-azure/2.1.0 -url file:///c:\Setup\elasticsearch-cloud-azure-2.1.0.zip -verbose"")
+$pluginbatargs = @(""-install elasticsearch/elasticsearch-cloud-azure/2.2.0 -url file:///c:\Setup\elasticsearch-cloud-azure-2.2.0.zip -verbose"")
 Write-Verbose ""Installing Elastic Search Azure Plugin ($pluginbat $pluginbatargs)"" -Verbose
 Start-Process -FilePath $pluginbat -ArgumentList $pluginbatargs -UseNewEnvironment -LoadUserProfile -Wait -RedirectStandardOutput $env:BrewmasterDir\Logs\azurepluginlog.log",
 											GetScript =
