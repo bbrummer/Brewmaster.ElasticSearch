@@ -272,7 +272,7 @@ Start-Process -FilePath $pluginbat -ArgumentList $pluginbatargs -UseNewEnvironme
 return $true}
 return $false",
 											SetScript =
-													@"Add-Content ""$env:ProgramFiles\elasticsearch-1.1.1\config\elasticsearch.yml"" ""`ncloud:`n`tazure:`n`t`tkeystore: C:\Setup\azurecert.pfx`n`t`tpassword: {{AzureCertificatePassword}}`n`t`tsubscription_id: {{AzureSubscriptionId}}`n`t`tservice_name: {{CloudService}}`n`t""",
+													@"Add-Content ""$env:ProgramFiles\elasticsearch-1.1.1\config\elasticsearch.yml"" ""`ncloud:`n`tazure:`n`t`tkeystore: C:/Setup/azurecert.pfx`n`t`tpassword: {{AzureCertificatePassword}}`n`t`tsubscription_id: {{AzureSubscriptionId}}`n`t`tservice_name: {{CloudService}}`n`t""",
 											GetScript =
 													@"return @{ Configured = Select-String -path ""$env:ProgramFiles\elasticsearch-1.1.1\config\elasticsearch.yml"" -pattern ""cloud:"" -allmatches -simplematch -quiet }",
 											Requires = new[] {"[Script]InstallPluginAzure"}
