@@ -1,7 +1,6 @@
 {
   "Name": "Brewmaster.ElasticSearch",
   "Description": "Elastic Search Farm",
-  "Version": "0.1.0",
   "Parameters": [
     {
       "Name": "Region",
@@ -62,7 +61,7 @@
     {
       "Name": "AzureCertificateUrl",
       "Type": "String",
-      "TypeHint": "url",
+      "TypeHint": "string",
       "Description": "URL to Azure certificate.",
       "Minimum": 8.0,
       "Maximum": 127.0
@@ -79,7 +78,7 @@
     {
       "Name": "AzureSubscriptionId",
       "Type": "String",
-      "TypeHint": "guid",
+      "TypeHint": "Guid",
       "Description": "Subscription Id.",
       "Minimum": 8.0,
       "Maximum": 127.0

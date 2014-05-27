@@ -326,13 +326,13 @@ return $false",
                                      .WithRegexValidation(@"^[a-zA-Z][a-zA-Z0-9-]{1,13}$",
                                                           "Must contain 3 to 14 letters, numbers, and hyphens. Must start with a letter."))
 				.WithParameter("AzureCertificateUrl", ParameterType.String, "URL to Azure certificate.",
-                               "url",
+                               "string",
                                p => p.WithLimits(8, 127))
 				.WithParameter("AzureCertificatePassword", ParameterType.String, "Password for the certificate file.",
                                "password",
                                p => p.WithLimits(8, 127), maskValue: true)										  
 				.WithParameter("AzureSubscriptionId", ParameterType.String, "Subscription Id.",
-                               "guid",
+                               "Guid",
                                p => p.WithLimits(8, 127))			
                 .WithParameter("NumberOfWebServers", ParameterType.Number, "Number of web servers.", "integer",
                                p => p.WithDefaultValue("2")
