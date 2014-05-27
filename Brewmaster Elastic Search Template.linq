@@ -123,7 +123,7 @@ return $false",
 return $true}
 return $false",
 											SetScript =
-													@"Invoke-WebRequest 'https://github.com/elasticsearch/elasticsearch-cloud-azure/archive/es-1.1.zip' -OutFile ""C:\setup\elasticsearch-cloud-azure-2.2.0.zip"""
+													@"Invoke-WebRequest 'http://download.elasticsearch.org/elasticsearch/elasticsearch-cloud-azure/elasticsearch-cloud-azure-2.2.0.zip' -OutFile ""C:\setup\elasticsearch-cloud-azure-2.2.0.zip"""
 											,
 											GetScript =
 													@"return @{ Downloaded = Test-Path -LiteralPath ""C:\setup\elasticsearch-cloud-azure-2.2.0.zip"" -PathType Leaf }",

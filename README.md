@@ -10,6 +10,7 @@ This Brewmaster template sets up a ElasticSearch cluster with minimum effort on 
 4. Azure Cloud Plugin for Elasticsearch is installed to facilitate auto discovery.
 5. Elasticsearch Head Plugin is installed to provide a dashboard.
 6. Firewall rules are addded to open ports 9200 and 9300
+7. Azure Cloud Plugin is configured 
 
 ###Certificate Configuration
 - The Azure Cloud Plugin for ElasticSearch needs access to the Azure management APIs to discovery nodes. For this it needs a certificate that can grant it access.
@@ -22,7 +23,7 @@ makecert -sky elasticsearch -r -n "CN=elasticsearchcert" -pe -a sha1 -len 2048 -
 - Upload this .pfx file to any web location so that Brewmaster can download it via a http/https url.
 - The url to the .pfx file has to be provided as the AzureCertificateUrl parameter for the template, along with the password for that file.
 
-####License
+###Terms of use
 [JRE](http://www.oracle.com/technetwork/java/javase/terms/license/index.html)
 [ElasticSearch](http://www.elasticsearch.org/terms-of-use/)
 [ElasticSearch Head](https://github.com/mobz/elasticsearch-head/blob/master/LICENCE)
