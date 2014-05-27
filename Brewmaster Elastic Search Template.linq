@@ -321,7 +321,7 @@ return $false",
                 .WithParameter("AdminPassword", ParameterType.String, "Password of local administrator account.",
                                "password",
                                p => p.WithLimits(8, 127), maskValue: true)
-                .WithParameter("ServerNamePrefix", ParameterType.String, "Name prefix for web servers.",
+                .WithParameter("ServerNamePrefix", ParameterType.String, "Name prefix for ElasticSearch servers.",
                                p => p.WithDefaultValue("esn")
                                      .WithRegexValidation(@"^[a-zA-Z][a-zA-Z0-9-]{1,13}$",
                                                           "Must contain 3 to 14 letters, numbers, and hyphens. Must start with a letter."))
@@ -334,7 +334,7 @@ return $false",
 				.WithParameter("AzureSubscriptionId", ParameterType.String, "Subscription Id.",
                                "Guid",
                                p => p.WithLimits(8, 127))			
-                .WithParameter("NumberOfWebServers", ParameterType.Number, "Number of web servers.", "integer",
+                .WithParameter("NumberOfElasticSearchServers", ParameterType.Number, "Number of ElasticSearch servers.", "integer",
                                p => p.WithDefaultValue("2")
                                      .WithLimits(2, 100)
                                      .WithRegexValidation(@"^\d+$", "Must enter a positive integer between 2 and 100."));

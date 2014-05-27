@@ -53,7 +53,7 @@
     {
       "Name": "ServerNamePrefix",
       "Type": "String",
-      "Description": "Name prefix for web servers.",
+      "Description": "Name prefix for ElasticSearch servers.",
       "Default": "esn",
       "AllowedRegex": "^[a-zA-Z][a-zA-Z0-9-]{1,13}$",
       "AllowedDescription": "Must contain 3 to 14 letters, numbers, and hyphens. Must start with a letter."
@@ -84,10 +84,10 @@
       "Maximum": 127.0
     },
     {
-      "Name": "NumberOfWebServers",
+      "Name": "NumberOfElasticSearchServers",
       "Type": "Number",
       "TypeHint": "integer",
-      "Description": "Number of web servers.",
+      "Description": "Number of ElasticSearch servers.",
       "Default": "2",
       "AllowedRegex": "^\\d+$",
       "AllowedDescription": "Must enter a positive integer between 2 and 100.",
@@ -121,7 +121,7 @@
       "Deployment": {
         "VirtualMachines": [
           {
-            "Name": "{{ServerNamePrefix}}",
+            "Name": "{{ServerNamePrefix}}{{1}}",
             "RoleSize": "{{VmSize}}",
             "AvailabilitySet": "es-avset",
             "OsVirtualDisk": {
@@ -144,6 +144,32 @@
               "ElasticSearchServer"
             ]
           }
+{% for i in (2..NumberOfElasticSearchServers) -%}
+		  ,{
+            "Name": "{{ServerNamePrefix}}{{i}}",
+            "RoleSize": "{{VmSize}}",
+            "AvailabilitySet": "es-avset",
+            "OsVirtualDisk": {
+              "OsType": "Windows",
+              "OsImageName": "a699494373c04fc0bc8f2bb1389d6106__Windows-Server-2012-R2-*"
+            },
+            "DataVirtualDisks": [
+              {
+                "DiskId": "disk0",
+                "LogicalSizeInGB": 40
+              }
+            ],
+            "WindowsConfigSet": {
+              "LocalAdminCredentialId": "vmadmin",
+              "EnableAutomaticUpdates": false,
+              "ChangePasswordAtLogon": false,
+              "DisableRdp": false
+            },
+            "ConfigSets": [
+              "ElasticSearchServer"
+            ]
+          }
+{% endfor -%}
         ],
         "DiskStorageAccount": "{{DiskStore}}",
         "RemoveUnreferencedVms": false
