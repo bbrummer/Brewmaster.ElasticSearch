@@ -15,7 +15,7 @@ This Brewmaster template sets up a ElasticSearch cluster with minimum effort on 
 ###Certificate Configuration
 - The Azure Cloud Plugin for ElasticSearch needs access to the Azure management APIs to discovery nodes. For this it needs a certificate that can grant it access.
 - To create a certificate run the following command </br>
-makecert -sky elasticsearch -r -n "CN=elasticsearchcert" -pe -a sha1 -len 2048 -ss My "ElasticSearchCert.cer"
+`makecert -sky elasticsearch -r -n "CN=elasticsearchcert" -pe -a sha1 -len 2048 -ss My "ElasticSearchCert.cer"`
 - This will create a ElasticSearchCert.cer(public key) and the certificate is installed in your certificate store (Personal > Certificates) which you can view using certmgr.msc 
 - You need to upload the ElasticSearchCert.cer file to the Azure Portal > Settings > Management Certificates
 - Next you need to export the certificate along with the private key from your certificate store using certmgr.msc
