@@ -14,7 +14,7 @@
 void Main()
 {
 	var template = WithTemplateExtensions
-                .CreateTemplate("Brewmaster.ElasticSearch", "Elastic Search Farm")
+                .CreateTemplate("Brewmaster.ElasticSearch", "Elastic Search Cluster")
 				.WithAffinityGroup("{{AffinityGroup}}", "{{Region}}")
 				.WithStorageAccount("{{DiskStore}}")
 				.WithCloudService("{{CloudService}}","Brewmaster Elastic Search",

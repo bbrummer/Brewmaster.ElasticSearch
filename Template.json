@@ -1,6 +1,6 @@
 {
   "Name": "Brewmaster.ElasticSearch",
-  "Description": "Elastic Search Farm",
+  "Description": "Elastic Search Cluster",
   "Version": "0.1.0",
   "Parameters": [
     {

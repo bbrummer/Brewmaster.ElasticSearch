@@ -4,14 +4,14 @@ ElasticSearch is a powerful open source search and analytics engine that makes d
 This Brewmaster template sets up a ElasticSearch cluster with minimum effort on Windows Azure.
 
 ###What this Brewmaster Template achieves
-1. Downloads and installs JRE and ElasticSearch
+1. Downloads and installs JRE and ElasticSearch.
 2. Virtual Machines are created using the latest version of Windows Server.
-3. ElasticSearch is installed as a service and the start up mode is set to 'Automatic'
+3. ElasticSearch is installed as a service and the start up mode is set to 'Automatic'.
 4. Azure Cloud Plugin for Elasticsearch is installed to facilitate auto discovery.
 5. Elasticsearch Head Plugin is installed to provide a dashboard.
-6. Firewall rules are addded to open ports 9200 and 9300
-7. Azure Cloud Plugin is configured for auto discovery of nodes.\
-8. A 100 GB Data Disk is created and attached to the VM.
+6. Firewall rules are addded to open ports 9200 and 9300.
+7. Azure Cloud Plugin is configured for auto discovery of nodes.
+8. A 100 GB disk is created and attached to the VM, for storing ElasticSearch data.
 
 ###Certificate Configuration
 - The Azure Cloud Plugin for ElasticSearch needs access to the Azure management APIs to discovery nodes. For this it needs a certificate that can grant it access.
