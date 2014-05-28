@@ -252,7 +252,7 @@ Write-Verbose ""Installing Elastic Search Head Plugin ($pluginbat $pluginbatargs
 Start-Process -FilePath $pluginbat -ArgumentList $pluginbatargs -UseNewEnvironment -Wait -RedirectStandardOutput $env:BrewmasterDir\Logs\headpluginlog.log",
 											GetScript =
 													@"return @{ Installed = Test-Path -LiteralPath ""$env:ProgramFiles\elasticsearch-1.1.1\plugins\head"" -PathType Container }",
-											Requires = new[] {"[Service]ConfigureElasticSearchService"}
+											Requires = new[] {"[Script]InstallElasticSearchService"}
 										},
 								new ScriptResource
                                         {
@@ -270,7 +270,7 @@ Write-Verbose ""Installing Elastic Search Azure Plugin ($pluginbat $pluginbatarg
 Start-Process -FilePath $pluginbat -ArgumentList $pluginbatargs -UseNewEnvironment -LoadUserProfile -Wait -RedirectStandardOutput $env:BrewmasterDir\Logs\azurepluginlog.log",
 											GetScript =
 													@"return @{ Installed = Test-Path -LiteralPath ""$env:ProgramFiles\elasticsearch-1.1.1\plugins\cloud-azure"" -PathType Container }",
-											Requires = new[] {"[Service]ConfigureElasticSearchService"}
+											Requires = new[] {"[Script]InstallElasticSearchService"}
 										},
 								new ScriptResource
                                         {
@@ -315,7 +315,7 @@ return $false",
 													@"Add-Content ""$env:ProgramFiles\elasticsearch-1.1.1\config\elasticsearch.yml"" ""`npath.data: F:/""",
 											GetScript =
 													@"return @{ Configured = Select-String -path ""$env:ProgramFiles\elasticsearch-1.1.1\config\elasticsearch.yml"" -pattern ""path.data: F:/"" -allmatches -simplematch -quiet }",
-											Requires = new[] {"[Script]InstallPluginAzure"}
+											Requires = new[] {"[xFormatDisks]FormatRawDisks"}
 										},
 								new GenericResource("Service")
 										{

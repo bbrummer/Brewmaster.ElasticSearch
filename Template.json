@@ -443,7 +443,7 @@
           "Args": {},
           "Nodes": [],
           "Requires": [
-            "[Service]ConfigureElasticSearchService"
+            "[Script]InstallElasticSearchService"
           ],
           "Description": null
         },
@@ -459,7 +459,7 @@
           "Args": {},
           "Nodes": [],
           "Requires": [
-            "[Service]ConfigureElasticSearchService"
+            "[Script]InstallElasticSearchService"
           ],
           "Description": null
         },
@@ -507,7 +507,7 @@
           "Args": {},
           "Nodes": [],
           "Requires": [
-            "[Script]InstallPluginAzure"
+            "[xFormatDisks]FormatRawDisks"
           ],
           "Description": null
         },
