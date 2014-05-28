@@ -22,7 +22,7 @@ void Main()
 					d.UsingDefaultDiskStorage("{{DiskStore}}")
 						.WithVirtualMachine("{{ServerNamePrefix}}","{{VmSize}}","es-avset",vm=>
 											vm.WithWindowsConfigSet("vmadmin")
-											.WithNewDataDisk("disk0",40)
+											.WithNewDataDisk("disk0",100)
 											.UsingConfigSet("ElasticSearchServer")))
 				)
 				.WithCredential("vmadmin","{{AdminName}}","{{AdminPassword}}")
@@ -54,6 +54,16 @@ void Main()
                             Name = "InstallElasticSearch",
                             Resources = new []
                                 {
+								new GenericResource("xFormatDisks")
+                                        {
+                                            Name = "FormatRawDisks",
+											ImportModule= "xAzureDataDisks",
+											ImportTypeName = "ADITI_xFormatDisks",
+                                            Args = new Dictionary<string, string>
+                                                {
+													{"FirstDriveLetter", "F"}
+                                                },
+                                        },
 								new GenericResource("File")
                                         {
                                             Name = "SetupFolder",
@@ -289,7 +299,22 @@ return $false",
 											SetScript =
 													@"Add-Content ""$env:ProgramFiles\elasticsearch-1.1.1\config\elasticsearch.yml"" ""`ndiscovery:`n`t`ttype: azure""",
 											GetScript =
-													@"return @{ Configured = Select-String -path ""$env:ProgramFiles\elasticsearch-1.1.1\config\elasticsearch.yml"" -pattern ""cloud:"" -allmatches -simplematch -quiet }",
+													@"return @{ Configured = Select-String -path ""$env:ProgramFiles\elasticsearch-1.1.1\config\elasticsearch.yml"" -pattern ""discovery:"" -allmatches -simplematch -quiet }",
+											Requires = new[] {"[Script]InstallPluginAzure"}
+										},
+								new ScriptResource
+                                        {
+                                            Name = "UpdateConfigDataPath",
+                                            Credential = "vmadmin",
+											TestScript =
+													@"if (Select-String -path ""$env:ProgramFiles\elasticsearch-1.1.1\config\elasticsearch.yml"" -pattern ""path.data: F:/"" -allmatches -simplematch -quiet)
+{Write-Verbose ""Elastic Search Config already has Discovery settings"" -Verbose
+return $true}
+return $false",
+											SetScript =
+													@"Add-Content ""$env:ProgramFiles\elasticsearch-1.1.1\config\elasticsearch.yml"" ""`npath.data: F:/""",
+											GetScript =
+													@"return @{ Configured = Select-String -path ""$env:ProgramFiles\elasticsearch-1.1.1\config\elasticsearch.yml"" -pattern ""path.data: F:/"" -allmatches -simplematch -quiet }",
 											Requires = new[] {"[Script]InstallPluginAzure"}
 										},
 								new GenericResource("Service")

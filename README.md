@@ -10,7 +10,8 @@ This Brewmaster template sets up a ElasticSearch cluster with minimum effort on 
 4. Azure Cloud Plugin for Elasticsearch is installed to facilitate auto discovery.
 5. Elasticsearch Head Plugin is installed to provide a dashboard.
 6. Firewall rules are addded to open ports 9200 and 9300
-7. Azure Cloud Plugin is configured for auto discovery of nodes.
+7. Azure Cloud Plugin is configured for auto discovery of nodes.\
+8. A 100 GB Data Disk is created and attached to the VM.
 
 ###Certificate Configuration
 - The Azure Cloud Plugin for ElasticSearch needs access to the Azure management APIs to discovery nodes. For this it needs a certificate that can grant it access.
