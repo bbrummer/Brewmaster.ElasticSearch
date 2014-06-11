@@ -1,7 +1,6 @@
 {
   "Name": "Brewmaster.ElasticSearch",
   "Description": "Elastic Search Cluster",
-  "Version": "0.1.0",
   "Parameters": [
     {
       "Name": "Region",
@@ -94,6 +93,17 @@
       "AllowedDescription": "Must enter a positive integer between 2 and 100.",
       "Minimum": 2.0,
       "Maximum": 100.0
+    },
+    {
+      "Name": "DataDiskSize",
+      "Type": "Number",
+      "TypeHint": "integer",
+      "Description": "Size of Data disk(GB).",
+      "Default": "100",
+      "AllowedRegex": "^\\d+$",
+      "AllowedDescription": "Must enter a positive integer between 2 and 1024.",
+      "Minimum": 2.0,
+      "Maximum": 1024.0
     }
   ],
   "Network": {
@@ -132,7 +142,7 @@
             "DataVirtualDisks": [
               {
                 "DiskId": "disk0",
-                "LogicalSizeInGB": 100
+                "LogicalSizeInGB": "{{DataDiskSize}}"
               }
             ],
             "WindowsConfigSet": {

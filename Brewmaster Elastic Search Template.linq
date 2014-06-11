@@ -362,7 +362,11 @@ return $false",
                 .WithParameter("NumberOfElasticSearchServers", ParameterType.Number, "Number of ElasticSearch servers.", "integer",
                                p => p.WithDefaultValue("2")
                                      .WithLimits(2, 100)
-                                     .WithRegexValidation(@"^\d+$", "Must enter a positive integer between 2 and 100."));
+                                     .WithRegexValidation(@"^\d+$", "Must enter a positive integer between 2 and 100."))
+				.WithParameter("DataDiskSize", ParameterType.Number, "Size of Data disk(GB).", "integer",
+                               p => p.WithDefaultValue("100")
+                                     .WithLimits(2, 1024)
+                                     .WithRegexValidation(@"^\d+$", "Must enter a positive integer between 2 and 1024."));
 									 
 	template.Save(@"E:\Git_Local\Brewmaster.ElasticSearch\Brewmaster.ElasticSearch");
 }
