@@ -142,7 +142,7 @@
             "DataVirtualDisks": [
               {
                 "DiskId": "disk0",
-                "LogicalSizeInGB": "{{DataDiskSize}}"
+                "LogicalSizeInGB": 100
               }
             ],
             "WindowsConfigSet": {
@@ -156,7 +156,7 @@
             ]
           }
 {% for i in (2..NumberOfElasticSearchServers) -%}
-		  ,{
+		,{
             "Name": "{{ServerNamePrefix}}{{i}}",
             "RoleSize": "{{VmSize}}",
             "AvailabilitySet": "es-avset",
@@ -180,7 +180,7 @@
               "ElasticSearchServer"
             ]
           }
-{% endfor -%}
+{% endfor -%}		  
         ],
         "DiskStorageAccount": "{{DiskStore}}",
         "RemoveUnreferencedVms": false
@@ -267,9 +267,9 @@
         },
         {
           "Credential": "vmadmin",
-          "GetScript": "return @{ Downloaded = Test-Path -LiteralPath \"C:\\setup\\jdk1.8.0_05.zip\" -PathType Leaf }",
-          "SetScript": "Write-Verbose \"Downloading JRE. This can take around 20 mins.\" -Verbose\r\nInvoke-WebRequest 'http://apselasticsearchdev.blob.core.windows.net/brewmasterinstallers/jdk1.8.0_05.zip' -OutFile \"C:\\setup\\jdk1.8.0_05.zip\"",
-          "TestScript": "if (Test-Path -LiteralPath \"C:\\setup\\jdk1.8.0_05.zip\" -PathType Leaf)\r\n{Write-Verbose \"C:\\setup\\jdk1.8.0_05.zip already exists.\" -Verbose\r\nreturn $true}\r\nreturn $false",
+          "GetScript": "return @{ Downloaded = Test-Path -LiteralPath \"C:\\setup\\jdk1.8.0_11.zip\" -PathType Leaf }",
+          "SetScript": "Write-Verbose \"Downloading JRE. This can take around 20 mins.\" -Verbose\r\nInvoke-WebRequest 'http://apselasticsearchdev.blob.core.windows.net/brewmasterinstallers/jdk1.8.0_11.zip' -OutFile \"C:\\setup\\jdk1.8.0_11.zip\"",
+          "TestScript": "if (Test-Path -LiteralPath \"C:\\setup\\jdk1.8.0_11.zip\" -PathType Leaf)\r\n{Write-Verbose \"C:\\setup\\jdk1.8.0_11.zip already exists.\" -Verbose\r\nreturn $true}\r\nreturn $false",
           "Type": "Script",
           "ImportModule": null,
           "ImportTypeName": null,
@@ -283,9 +283,9 @@
         },
         {
           "Credential": "vmadmin",
-          "GetScript": "return @{ Downloaded = Test-Path -LiteralPath \"C:\\setup\\elasticsearch-1.1.1.zip\" -PathType Leaf }",
-          "SetScript": "Invoke-WebRequest 'https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.1.1.zip' -OutFile \"C:\\setup\\elasticsearch-1.1.1.zip\"",
-          "TestScript": "if (Test-Path -LiteralPath \"C:\\setup\\elasticsearch-1.1.1.zip\" -PathType Leaf)\r\n{Write-Verbose \"C:\\setup\\jdk1.8.0_05.zip already exists.\" -Verbose\r\nreturn $true}\r\nreturn $false",
+          "GetScript": "return @{ Downloaded = Test-Path -LiteralPath \"C:\\setup\\elasticsearch-1.3.1.zip\" -PathType Leaf }",
+          "SetScript": "Invoke-WebRequest 'https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.3.1.zip' -OutFile \"C:\\setup\\elasticsearch-1.3.1.zip\"",
+          "TestScript": "if (Test-Path -LiteralPath \"C:\\setup\\elasticsearch-1.3.1.zip\" -PathType Leaf)\r\n{Write-Verbose \"C:\\setup\\elasticsearch-1.3.1.zip already exists.\" -Verbose\r\nreturn $true}\r\nreturn $false",
           "Type": "Script",
           "ImportModule": null,
           "ImportTypeName": null,
@@ -351,7 +351,7 @@
           "ImportTypeName": null,
           "Name": "UnpackJRE",
           "Args": {
-            "Path": "C:\\setup\\jdk1.8.0_05.zip",
+            "Path": "C:\\setup\\jdk1.8.0_11.zip",
             "Destination": "%ProgramFiles%",
             "Ensure": "Present"
           },
@@ -367,7 +367,7 @@
           "ImportTypeName": null,
           "Name": "UnpackElasticSearch",
           "Args": {
-            "Path": "C:\\setup\\elasticsearch-1.1.1.zip",
+            "Path": "C:\\setup\\elasticsearch-1.3.1.zip",
             "Destination": "%ProgramFiles%",
             "Ensure": "Present"
           },
@@ -384,7 +384,7 @@
           "Name": "SetJavaHome",
           "Args": {
             "Name": "JAVA_HOME",
-            "Value": "%ProgramFiles%\\jdk1.8.0_05\\",
+            "Value": "%ProgramFiles%\\jdk1.8.0_11\\",
             "Ensure": "Present"
           },
           "Nodes": [],
@@ -396,7 +396,7 @@
         {
           "Credential": "vmadmin",
           "GetScript": "return @{ ServiceInstalled = Get-WmiObject -Class Win32_Service -Filter \"Name='elasticsearch-service-x64'\" }",
-          "SetScript": "$servicebat = \"$env:ProgramFiles\\elasticsearch-1.1.1\\bin\\service.bat\"\r\n$servicebatargs = @(\"install\")\r\nWrite-Verbose \"Installing Elastic Search Service ($servicebat $servicebatargs)\" -Verbose\r\nStart-Process -FilePath $servicebat -ArgumentList $servicebatargs -UseNewEnvironment -Wait -RedirectStandardOutput $env:BrewmasterDir\\Logs\\elasticsearchservice.log",
+          "SetScript": "$servicebat = \"$env:ProgramFiles\\elasticsearch-1.3.1\\bin\\service.bat\"\r\n$servicebatargs = @(\"install\")\r\nWrite-Verbose \"Installing Elastic Search Service ($servicebat $servicebatargs)\" -Verbose\r\nStart-Process -FilePath $servicebat -ArgumentList $servicebatargs -UseNewEnvironment -Wait -RedirectStandardOutput $env:BrewmasterDir\\Logs\\elasticsearchservice.log",
           "TestScript": "if (Get-WmiObject -Class Win32_Service -Filter \"Name='elasticsearch-service-x64'\")\r\n{Write-Verbose \"elasticsearch-service-x64 already exists.\" -Verbose\r\nreturn $true}\r\nreturn $false",
           "Type": "Script",
           "ImportModule": null,
@@ -443,9 +443,9 @@
         },
         {
           "Credential": "vmadmin",
-          "GetScript": "return @{ Installed = Test-Path -LiteralPath \"$env:ProgramFiles\\elasticsearch-1.1.1\\plugins\\head\" -PathType Container }",
-          "SetScript": "$pluginbat = \"$env:ProgramFiles\\elasticsearch-1.1.1\\bin\\plugin.bat\"\r\n$pluginbatargs = @(\"-install mobz/elasticsearch-head -url file:///c:\\Setup\\elasticsearch-head-master.zip -verbose\")\r\nWrite-Verbose \"Installing Elastic Search Head Plugin ($pluginbat $pluginbatargs)\" -Verbose\r\nStart-Process -FilePath $pluginbat -ArgumentList $pluginbatargs -UseNewEnvironment -Wait -RedirectStandardOutput $env:BrewmasterDir\\Logs\\headpluginlog.log",
-          "TestScript": "if (Test-Path -LiteralPath \"$env:ProgramFiles\\elasticsearch-1.1.1\\plugins\\head\" -PathType Container)\r\n{Write-Verbose \"Elastic Search Head Plugin already installed.\" -Verbose\r\nreturn $true}\r\nreturn $false",
+          "GetScript": "return @{ Installed = Test-Path -LiteralPath \"$env:ProgramFiles\\elasticsearch-1.3.1\\plugins\\head\" -PathType Container }",
+          "SetScript": "$pluginbat = \"$env:ProgramFiles\\elasticsearch-1.3.1\\bin\\plugin.bat\"\r\n$pluginbatargs = @(\"-install mobz/elasticsearch-head -url file:///c:\\Setup\\elasticsearch-head-master.zip -verbose\")\r\nWrite-Verbose \"Installing Elastic Search Head Plugin ($pluginbat $pluginbatargs)\" -Verbose\r\nStart-Process -FilePath $pluginbat -ArgumentList $pluginbatargs -UseNewEnvironment -Wait -RedirectStandardOutput $env:BrewmasterDir\\Logs\\headpluginlog.log",
+          "TestScript": "if (Test-Path -LiteralPath \"$env:ProgramFiles\\elasticsearch-1.3.1\\plugins\\head\" -PathType Container)\r\n{Write-Verbose \"Elastic Search Head Plugin already installed.\" -Verbose\r\nreturn $true}\r\nreturn $false",
           "Type": "Script",
           "ImportModule": null,
           "ImportTypeName": null,
@@ -459,9 +459,9 @@
         },
         {
           "Credential": "vmadmin",
-          "GetScript": "return @{ Installed = Test-Path -LiteralPath \"$env:ProgramFiles\\elasticsearch-1.1.1\\plugins\\cloud-azure\" -PathType Container }",
-          "SetScript": "$pluginbat = \"$env:ProgramFiles\\elasticsearch-1.1.1\\bin\\plugin.bat\"\r\n$pluginbatargs = @(\"-install elasticsearch/elasticsearch-cloud-azure/2.2.0 -url file:///c:\\Setup\\elasticsearch-cloud-azure-2.2.0.zip -verbose\")\r\nWrite-Verbose \"Installing Elastic Search Azure Plugin ($pluginbat $pluginbatargs)\" -Verbose\r\nStart-Process -FilePath $pluginbat -ArgumentList $pluginbatargs -UseNewEnvironment -LoadUserProfile -Wait -RedirectStandardOutput $env:BrewmasterDir\\Logs\\azurepluginlog.log",
-          "TestScript": "if (Test-Path -LiteralPath \"$env:ProgramFiles\\elasticsearch-1.1.1\\plugins\\cloud-azure\" -PathType Container)\r\n{Write-Verbose \"Elastic Search Head Plugin already installed.\" -Verbose\r\nreturn $true}\r\nreturn $false",
+          "GetScript": "return @{ Installed = Test-Path -LiteralPath \"$env:ProgramFiles\\elasticsearch-1.3.1\\plugins\\cloud-azure\" -PathType Container }",
+          "SetScript": "$pluginbat = \"$env:ProgramFiles\\elasticsearch-1.3.1\\bin\\plugin.bat\"\r\n$pluginbatargs = @(\"-install elasticsearch/elasticsearch-cloud-azure/2.2.0 -url file:///c:\\Setup\\elasticsearch-cloud-azure-2.2.0.zip -verbose\")\r\nWrite-Verbose \"Installing Elastic Search Azure Plugin ($pluginbat $pluginbatargs)\" -Verbose\r\nStart-Process -FilePath $pluginbat -ArgumentList $pluginbatargs -UseNewEnvironment -LoadUserProfile -Wait -RedirectStandardOutput $env:BrewmasterDir\\Logs\\azurepluginlog.log",
+          "TestScript": "if (Test-Path -LiteralPath \"$env:ProgramFiles\\elasticsearch-1.3.1\\plugins\\cloud-azure\" -PathType Container)\r\n{Write-Verbose \"Elastic Search Azure Plugin already installed.\" -Verbose\r\nreturn $true}\r\nreturn $false",
           "Type": "Script",
           "ImportModule": null,
           "ImportTypeName": null,
@@ -475,9 +475,9 @@
         },
         {
           "Credential": "vmadmin",
-          "GetScript": "return @{ Configured = Select-String -path \"$env:ProgramFiles\\elasticsearch-1.1.1\\config\\elasticsearch.yml\" -pattern \"cloud:\" -allmatches -simplematch -quiet }",
-          "SetScript": "Add-Content \"$env:ProgramFiles\\elasticsearch-1.1.1\\config\\elasticsearch.yml\" \"`ncloud:`n`tazure:`n`t`tkeystore: C:/Setup/azurecert.pfx`n`t`tpassword: {{AzureCertificatePassword}}`n`t`tsubscription_id: {{AzureSubscriptionId}}`n`t`tservice_name: {{CloudService}}`n`t\"",
-          "TestScript": "if (Select-String -path \"$env:ProgramFiles\\elasticsearch-1.1.1\\config\\elasticsearch.yml\" -pattern \"cloud:\" -allmatches -simplematch -quiet)\r\n{Write-Verbose \"Elastic Search Config already has Cloud settings\" -Verbose\r\nreturn $true}\r\nreturn $false",
+          "GetScript": "return @{ Configured = Select-String -path \"$env:ProgramFiles\\elasticsearch-1.3.1\\config\\elasticsearch.yml\" -pattern \"cloud:\" -allmatches -simplematch -quiet }",
+          "SetScript": "Add-Content \"$env:ProgramFiles\\elasticsearch-1.3.1\\config\\elasticsearch.yml\" \"`ncloud:`n`tazure:`n`t`tkeystore: C:/Setup/azurecert.pfx`n`t`tpassword: {{AzureCertificatePassword}}`n`t`tsubscription_id: {{AzureSubscriptionId}}`n`t`tservice_name: {{CloudService}}`n`t\"",
+          "TestScript": "if (Select-String -path \"$env:ProgramFiles\\elasticsearch-1.3.1\\config\\elasticsearch.yml\" -pattern \"cloud:\" -allmatches -simplematch -quiet)\r\n{Write-Verbose \"Elastic Search Config already has Cloud settings\" -Verbose\r\nreturn $true}\r\nreturn $false",
           "Type": "Script",
           "ImportModule": null,
           "ImportTypeName": null,
@@ -491,9 +491,9 @@
         },
         {
           "Credential": "vmadmin",
-          "GetScript": "return @{ Configured = Select-String -path \"$env:ProgramFiles\\elasticsearch-1.1.1\\config\\elasticsearch.yml\" -pattern \"discovery:\" -allmatches -simplematch -quiet }",
-          "SetScript": "Add-Content \"$env:ProgramFiles\\elasticsearch-1.1.1\\config\\elasticsearch.yml\" \"`ndiscovery:`n`t`ttype: azure\"",
-          "TestScript": "if (Select-String -path \"$env:ProgramFiles\\elasticsearch-1.1.1\\config\\elasticsearch.yml\" -pattern \"discovery:\" -allmatches -simplematch -quiet)\r\n{Write-Verbose \"Elastic Search Config already has Discovery settings\" -Verbose\r\nreturn $true}\r\nreturn $false",
+          "GetScript": "return @{ Configured = Select-String -path \"$env:ProgramFiles\\elasticsearch-1.3.1\\config\\elasticsearch.yml\" -pattern \"discovery:\" -allmatches -simplematch -quiet }",
+          "SetScript": "Add-Content \"$env:ProgramFiles\\elasticsearch-1.3.1\\config\\elasticsearch.yml\" \"`ndiscovery:`n`t`ttype: azure\"",
+          "TestScript": "if (Select-String -path \"$env:ProgramFiles\\elasticsearch-1.3.1\\config\\elasticsearch.yml\" -pattern \"discovery:\" -allmatches -simplematch -quiet)\r\n{Write-Verbose \"Elastic Search Config already has Discovery settings\" -Verbose\r\nreturn $true}\r\nreturn $false",
           "Type": "Script",
           "ImportModule": null,
           "ImportTypeName": null,
@@ -507,9 +507,9 @@
         },
         {
           "Credential": "vmadmin",
-          "GetScript": "return @{ Configured = Select-String -path \"$env:ProgramFiles\\elasticsearch-1.1.1\\config\\elasticsearch.yml\" -pattern \"path.data: F:/\" -allmatches -simplematch -quiet }",
-          "SetScript": "Add-Content \"$env:ProgramFiles\\elasticsearch-1.1.1\\config\\elasticsearch.yml\" \"`npath.data: F:/\"",
-          "TestScript": "if (Select-String -path \"$env:ProgramFiles\\elasticsearch-1.1.1\\config\\elasticsearch.yml\" -pattern \"path.data: F:/\" -allmatches -simplematch -quiet)\r\n{Write-Verbose \"Elastic Search Config already has Discovery settings\" -Verbose\r\nreturn $true}\r\nreturn $false",
+          "GetScript": "return @{ Configured = Select-String -path \"$env:ProgramFiles\\elasticsearch-1.3.1\\config\\elasticsearch.yml\" -pattern \"path.data: F:/\" -allmatches -simplematch -quiet }",
+          "SetScript": "Add-Content \"$env:ProgramFiles\\elasticsearch-1.3.1\\config\\elasticsearch.yml\" \"`npath.data: F:/\"",
+          "TestScript": "if (Select-String -path \"$env:ProgramFiles\\elasticsearch-1.3.1\\config\\elasticsearch.yml\" -pattern \"path.data: F:/\" -allmatches -simplematch -quiet)\r\n{Write-Verbose \"Elastic Search Config already has Discovery settings\" -Verbose\r\nreturn $true}\r\nreturn $false",
           "Type": "Script",
           "ImportModule": null,
           "ImportTypeName": null,

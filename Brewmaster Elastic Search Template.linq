@@ -79,16 +79,16 @@ void Main()
                                             Name = "DownloadJRE",
                                             Credential = "vmadmin",
 											TestScript =
-													@"if (Test-Path -LiteralPath ""C:\setup\jdk1.8.0_05.zip"" -PathType Leaf)
-{Write-Verbose ""C:\setup\jdk1.8.0_05.zip already exists."" -Verbose
+													@"if (Test-Path -LiteralPath ""C:\setup\jdk1.8.0_11.zip"" -PathType Leaf)
+{Write-Verbose ""C:\setup\jdk1.8.0_11.zip already exists."" -Verbose
 return $true}
 return $false",
 											SetScript =
 													@"Write-Verbose ""Downloading JRE. This can take around 20 mins."" -Verbose
-Invoke-WebRequest 'http://apselasticsearchdev.blob.core.windows.net/brewmasterinstallers/jdk1.8.0_05.zip' -OutFile ""C:\setup\jdk1.8.0_05.zip"""
+Invoke-WebRequest 'http://apselasticsearchdev.blob.core.windows.net/brewmasterinstallers/jdk1.8.0_11.zip' -OutFile ""C:\setup\jdk1.8.0_11.zip"""
 											,
 											GetScript =
-													@"return @{ Downloaded = Test-Path -LiteralPath ""C:\setup\jdk1.8.0_05.zip"" -PathType Leaf }",
+													@"return @{ Downloaded = Test-Path -LiteralPath ""C:\setup\jdk1.8.0_11.zip"" -PathType Leaf }",
 											Requires = new[] {"[File]SetupFolder"}
 										},
 								new ScriptResource
@@ -96,15 +96,15 @@ Invoke-WebRequest 'http://apselasticsearchdev.blob.core.windows.net/brewmasterin
                                             Name = "DownloadElasticSearch",
                                             Credential = "vmadmin",
 											TestScript =
-													@"if (Test-Path -LiteralPath ""C:\setup\elasticsearch-1.1.1.zip"" -PathType Leaf)
-{Write-Verbose ""C:\setup\jdk1.8.0_05.zip already exists."" -Verbose
+													@"if (Test-Path -LiteralPath ""C:\setup\elasticsearch-1.3.1.zip"" -PathType Leaf)
+{Write-Verbose ""C:\setup\elasticsearch-1.3.1.zip already exists."" -Verbose
 return $true}
 return $false",
 											SetScript =
-													@"Invoke-WebRequest 'https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.1.1.zip' -OutFile ""C:\setup\elasticsearch-1.1.1.zip"""
+													@"Invoke-WebRequest 'https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.3.1.zip' -OutFile ""C:\setup\elasticsearch-1.3.1.zip"""
 											,
 											GetScript =
-													@"return @{ Downloaded = Test-Path -LiteralPath ""C:\setup\elasticsearch-1.1.1.zip"" -PathType Leaf }",
+													@"return @{ Downloaded = Test-Path -LiteralPath ""C:\setup\elasticsearch-1.3.1.zip"" -PathType Leaf }",
 											Requires = new[] {"[File]SetupFolder"}
 										},
 								new ScriptResource
@@ -160,7 +160,7 @@ return $false",
 											Name = "UnpackJRE",
 											Args = new Dictionary<string, string>
                                                 {
-													{"Path" , @"C:\setup\jdk1.8.0_05.zip"},
+													{"Path" , @"C:\setup\jdk1.8.0_11.zip"},
 													{"Destination" , @"%ProgramFiles%"},
 													{"Ensure" , "Present"}
 												},
@@ -171,7 +171,7 @@ return $false",
 											Name = "UnpackElasticSearch",
 											Args = new Dictionary<string, string>
                                                 {
-													{"Path" , @"C:\setup\elasticsearch-1.1.1.zip"},
+													{"Path" , @"C:\setup\elasticsearch-1.3.1.zip"},
 													{"Destination" , @"%ProgramFiles%"},
 													{"Ensure" , "Present"}
 												},
@@ -183,7 +183,7 @@ return $false",
 											Args = new Dictionary<string, string>
                                                 {
 													{"Name" , "JAVA_HOME"},
-													{"Value" , @"%ProgramFiles%\jdk1.8.0_05\"},
+													{"Value" , @"%ProgramFiles%\jdk1.8.0_11\"},
 													{"Ensure" , "Present"}
 												},
   											Requires = new[] {"[Archive]UnpackJRE"}
@@ -198,7 +198,7 @@ return $false",
 return $true}
 return $false",
 											SetScript =
-													@"$servicebat = ""$env:ProgramFiles\elasticsearch-1.1.1\bin\service.bat""
+													@"$servicebat = ""$env:ProgramFiles\elasticsearch-1.3.1\bin\service.bat""
 $servicebatargs = @(""install"")
 Write-Verbose ""Installing Elastic Search Service ($servicebat $servicebatargs)"" -Verbose
 Start-Process -FilePath $servicebat -ArgumentList $servicebatargs -UseNewEnvironment -Wait -RedirectStandardOutput $env:BrewmasterDir\Logs\elasticsearchservice.log",
@@ -241,17 +241,17 @@ return $false",
                                             Name = "InstallPluginHead",
                                             Credential = "vmadmin",
 											TestScript =
-													@"if (Test-Path -LiteralPath ""$env:ProgramFiles\elasticsearch-1.1.1\plugins\head"" -PathType Container)
+													@"if (Test-Path -LiteralPath ""$env:ProgramFiles\elasticsearch-1.3.1\plugins\head"" -PathType Container)
 {Write-Verbose ""Elastic Search Head Plugin already installed."" -Verbose
 return $true}
 return $false",
 											SetScript =
-													@"$pluginbat = ""$env:ProgramFiles\elasticsearch-1.1.1\bin\plugin.bat""
+													@"$pluginbat = ""$env:ProgramFiles\elasticsearch-1.3.1\bin\plugin.bat""
 $pluginbatargs = @(""-install mobz/elasticsearch-head -url file:///c:\Setup\elasticsearch-head-master.zip -verbose"")
 Write-Verbose ""Installing Elastic Search Head Plugin ($pluginbat $pluginbatargs)"" -Verbose
 Start-Process -FilePath $pluginbat -ArgumentList $pluginbatargs -UseNewEnvironment -Wait -RedirectStandardOutput $env:BrewmasterDir\Logs\headpluginlog.log",
 											GetScript =
-													@"return @{ Installed = Test-Path -LiteralPath ""$env:ProgramFiles\elasticsearch-1.1.1\plugins\head"" -PathType Container }",
+													@"return @{ Installed = Test-Path -LiteralPath ""$env:ProgramFiles\elasticsearch-1.3.1\plugins\head"" -PathType Container }",
 											Requires = new[] {"[Script]InstallElasticSearchService"}
 										},
 								new ScriptResource
@@ -259,17 +259,17 @@ Start-Process -FilePath $pluginbat -ArgumentList $pluginbatargs -UseNewEnvironme
                                             Name = "InstallPluginAzure",
                                             Credential = "vmadmin",
 											TestScript =
-													@"if (Test-Path -LiteralPath ""$env:ProgramFiles\elasticsearch-1.1.1\plugins\cloud-azure"" -PathType Container)
-{Write-Verbose ""Elastic Search Head Plugin already installed."" -Verbose
+													@"if (Test-Path -LiteralPath ""$env:ProgramFiles\elasticsearch-1.3.1\plugins\cloud-azure"" -PathType Container)
+{Write-Verbose ""Elastic Search Azure Plugin already installed."" -Verbose
 return $true}
 return $false",
 											SetScript =
-													@"$pluginbat = ""$env:ProgramFiles\elasticsearch-1.1.1\bin\plugin.bat""
+													@"$pluginbat = ""$env:ProgramFiles\elasticsearch-1.3.1\bin\plugin.bat""
 $pluginbatargs = @(""-install elasticsearch/elasticsearch-cloud-azure/2.2.0 -url file:///c:\Setup\elasticsearch-cloud-azure-2.2.0.zip -verbose"")
 Write-Verbose ""Installing Elastic Search Azure Plugin ($pluginbat $pluginbatargs)"" -Verbose
 Start-Process -FilePath $pluginbat -ArgumentList $pluginbatargs -UseNewEnvironment -LoadUserProfile -Wait -RedirectStandardOutput $env:BrewmasterDir\Logs\azurepluginlog.log",
 											GetScript =
-													@"return @{ Installed = Test-Path -LiteralPath ""$env:ProgramFiles\elasticsearch-1.1.1\plugins\cloud-azure"" -PathType Container }",
+													@"return @{ Installed = Test-Path -LiteralPath ""$env:ProgramFiles\elasticsearch-1.3.1\plugins\cloud-azure"" -PathType Container }",
 											Requires = new[] {"[Script]InstallElasticSearchService"}
 										},
 								new ScriptResource
@@ -277,14 +277,14 @@ Start-Process -FilePath $pluginbat -ArgumentList $pluginbatargs -UseNewEnvironme
                                             Name = "UpdateConfigCloud",
                                             Credential = "vmadmin",
 											TestScript =
-													@"if (Select-String -path ""$env:ProgramFiles\elasticsearch-1.1.1\config\elasticsearch.yml"" -pattern ""cloud:"" -allmatches -simplematch -quiet)
+													@"if (Select-String -path ""$env:ProgramFiles\elasticsearch-1.3.1\config\elasticsearch.yml"" -pattern ""cloud:"" -allmatches -simplematch -quiet)
 {Write-Verbose ""Elastic Search Config already has Cloud settings"" -Verbose
 return $true}
 return $false",
 											SetScript =
-													@"Add-Content ""$env:ProgramFiles\elasticsearch-1.1.1\config\elasticsearch.yml"" ""`ncloud:`n`tazure:`n`t`tkeystore: C:/Setup/azurecert.pfx`n`t`tpassword: {{AzureCertificatePassword}}`n`t`tsubscription_id: {{AzureSubscriptionId}}`n`t`tservice_name: {{CloudService}}`n`t""",
+													@"Add-Content ""$env:ProgramFiles\elasticsearch-1.3.1\config\elasticsearch.yml"" ""`ncloud:`n`tazure:`n`t`tkeystore: C:/Setup/azurecert.pfx`n`t`tpassword: {{AzureCertificatePassword}}`n`t`tsubscription_id: {{AzureSubscriptionId}}`n`t`tservice_name: {{CloudService}}`n`t""",
 											GetScript =
-													@"return @{ Configured = Select-String -path ""$env:ProgramFiles\elasticsearch-1.1.1\config\elasticsearch.yml"" -pattern ""cloud:"" -allmatches -simplematch -quiet }",
+													@"return @{ Configured = Select-String -path ""$env:ProgramFiles\elasticsearch-1.3.1\config\elasticsearch.yml"" -pattern ""cloud:"" -allmatches -simplematch -quiet }",
 											Requires = new[] {"[Script]InstallPluginAzure"}
 										},
 								new ScriptResource
@@ -292,14 +292,14 @@ return $false",
                                             Name = "UpdateConfigDiscovery",
                                             Credential = "vmadmin",
 											TestScript =
-													@"if (Select-String -path ""$env:ProgramFiles\elasticsearch-1.1.1\config\elasticsearch.yml"" -pattern ""discovery:"" -allmatches -simplematch -quiet)
+													@"if (Select-String -path ""$env:ProgramFiles\elasticsearch-1.3.1\config\elasticsearch.yml"" -pattern ""discovery:"" -allmatches -simplematch -quiet)
 {Write-Verbose ""Elastic Search Config already has Discovery settings"" -Verbose
 return $true}
 return $false",
 											SetScript =
-													@"Add-Content ""$env:ProgramFiles\elasticsearch-1.1.1\config\elasticsearch.yml"" ""`ndiscovery:`n`t`ttype: azure""",
+													@"Add-Content ""$env:ProgramFiles\elasticsearch-1.3.1\config\elasticsearch.yml"" ""`ndiscovery:`n`t`ttype: azure""",
 											GetScript =
-													@"return @{ Configured = Select-String -path ""$env:ProgramFiles\elasticsearch-1.1.1\config\elasticsearch.yml"" -pattern ""discovery:"" -allmatches -simplematch -quiet }",
+													@"return @{ Configured = Select-String -path ""$env:ProgramFiles\elasticsearch-1.3.1\config\elasticsearch.yml"" -pattern ""discovery:"" -allmatches -simplematch -quiet }",
 											Requires = new[] {"[Script]InstallPluginAzure"}
 										},
 								new ScriptResource
@@ -307,14 +307,14 @@ return $false",
                                             Name = "UpdateConfigDataPath",
                                             Credential = "vmadmin",
 											TestScript =
-													@"if (Select-String -path ""$env:ProgramFiles\elasticsearch-1.1.1\config\elasticsearch.yml"" -pattern ""path.data: F:/"" -allmatches -simplematch -quiet)
+													@"if (Select-String -path ""$env:ProgramFiles\elasticsearch-1.3.1\config\elasticsearch.yml"" -pattern ""path.data: F:/"" -allmatches -simplematch -quiet)
 {Write-Verbose ""Elastic Search Config already has Discovery settings"" -Verbose
 return $true}
 return $false",
 											SetScript =
-													@"Add-Content ""$env:ProgramFiles\elasticsearch-1.1.1\config\elasticsearch.yml"" ""`npath.data: F:/""",
+													@"Add-Content ""$env:ProgramFiles\elasticsearch-1.3.1\config\elasticsearch.yml"" ""`npath.data: F:/""",
 											GetScript =
-													@"return @{ Configured = Select-String -path ""$env:ProgramFiles\elasticsearch-1.1.1\config\elasticsearch.yml"" -pattern ""path.data: F:/"" -allmatches -simplematch -quiet }",
+													@"return @{ Configured = Select-String -path ""$env:ProgramFiles\elasticsearch-1.3.1\config\elasticsearch.yml"" -pattern ""path.data: F:/"" -allmatches -simplematch -quiet }",
 											Requires = new[] {"[xFormatDisks]FormatRawDisks"}
 										},
 								new GenericResource("Service")
@@ -368,5 +368,5 @@ return $false",
                                      .WithLimits(2, 1024)
                                      .WithRegexValidation(@"^\d+$", "Must enter a positive integer between 2 and 1024."));
 									 
-	template.Save(@"E:\Git_Local\Brewmaster.ElasticSearch\Brewmaster.ElasticSearch");
+	template.Save(@"E:\Git_Local\BMTeamplate\BMTeamplate\");
 }
