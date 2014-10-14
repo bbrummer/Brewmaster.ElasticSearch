@@ -1,6 +1,6 @@
 {
   "Name": "ElasticSearch",
-  "Description": "Elastic Search Cluster",
+  "Description": "Creates an Elastic Search Cluster.",
   "Parameters": [
     {
       "Name": "Region",
