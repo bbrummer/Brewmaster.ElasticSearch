@@ -1,5 +1,5 @@
 {
-  "Name": "Brewmaster.ElasticSearch",
+  "Name": "ElasticSearch",
   "Description": "Elastic Search Cluster",
   "Parameters": [
     {
