@@ -53,7 +53,7 @@
     {
       "Name": "ServerNamePrefix",
       "Type": "String",
-      "Description": "Name prefix for ElasticSearch servers.",
+      "Description": "Name prefix for ElasticSearch servers. Your ES cluster is named 'prefix'-cluster",
       "Default": "esn",
       "AllowedRegex": "^[a-zA-Z][a-zA-Z0-9-]{1,13}$",
       "AllowedDescription": "Must contain 3 to 14 letters, numbers, and hyphens. Must start with a letter."
@@ -396,7 +396,7 @@
         {
           "Credential": "vmadmin",
           "GetScript": "return @{ ServiceInstalled = Get-WmiObject -Class Win32_Service -Filter \"Name='elasticsearch-service-x64'\" }",
-          "SetScript": "$servicebat = \"$env:ProgramFiles\\elasticsearch-1.3.1\\bin\\service.bat\"\r\n$servicebatargs = @(\"install\")\r\nWrite-Verbose \"Installing Elastic Search Service ($servicebat $servicebatargs)\" -Verbose\r\nStart-Process -FilePath $servicebat -ArgumentList $servicebatargs -UseNewEnvironment -Wait -RedirectStandardOutput $env:BrewmasterDir\\Logs\\elasticsearchservice.log",
+          "SetScript": "$servicebat = \"$env:ProgramFiles\\elasticsearch-1.3.1\\bin\\service.bat\"\r\n$servicebatargs = @(\"install\", \"{{ServerNamePrefix}}-cluster\")\r\nWrite-Verbose \"Installing Elastic Search Service ($servicebat $servicebatargs)\" -Verbose\r\nStart-Process -FilePath $servicebat -ArgumentList $servicebatargs -UseNewEnvironment -Wait -RedirectStandardOutput $env:BrewmasterDir\\Logs\\elasticsearchservice.log",
           "TestScript": "if (Get-WmiObject -Class Win32_Service -Filter \"Name='elasticsearch-service-x64'\")\r\n{Write-Verbose \"elasticsearch-service-x64 already exists.\" -Verbose\r\nreturn $true}\r\nreturn $false",
           "Type": "Script",
           "ImportModule": null,
@@ -470,6 +470,22 @@
           "Nodes": [],
           "Requires": [
             "[Script]InstallElasticSearchService"
+          ],
+          "Description": null
+        },
+        {
+          "Credential": "vmadmin",
+          "GetScript": "return @{ Configured = Select-String -path \"$env:ProgramFiles\\elasticsearch-1.3.1\\config\\elasticsearch.yml\" -pattern \"^\\s*cluster.name:\" -allmatches -simplematch -quiet }",
+          "SetScript": "Add-Content \"$env:ProgramFiles\\elasticsearch-1.3.1\\config\\elasticsearch.yml\" \"`ncluster.name: {{ServerNamePrefix}}-cluster\"",
+          "TestScript": "if (Select-String -path \"$env:ProgramFiles\\elasticsearch-1.3.1\\config\\elasticsearch.yml\" -pattern \"^\\s*cluster.name:\" -allmatches -simplematch -quiet)\r\n{Write-Verbose \"Elastic Search Config already has cluster name set\" -Verbose\r\nreturn $true}\r\nreturn $false",
+          "Type": "Script",
+          "ImportModule": null,
+          "ImportTypeName": null,
+          "Name": "UpdateConfig",
+          "Args": {},
+          "Nodes": [],
+          "Requires": [
+            "[Archive]UnpackElasticSearch"
           ],
           "Description": null
         },
