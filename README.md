@@ -11,6 +11,7 @@ This Brewmaster template sets up a ElasticSearch cluster with minimum effort on 
 5. Elasticsearch Head Plugin is installed to provide a dashboard.
 6. Firewall rules are addded to open ports 9200 and 9300.
 7. Azure Cloud Plugin is configured for auto discovery of nodes.
+8. Sets `bootstrap.mlockall=true` which locks memory to ES. Also computes and sets maximum physical memory made available to ES
 8. A 100 GB disk is created and attached to the VM, for storing ElasticSearch data.
 
 ###Certificate Configuration
