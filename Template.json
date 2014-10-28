@@ -482,14 +482,12 @@
         },
         {
           "Credential": "vmadmin",
-          "GetScript": "return @{ Configured = Select-String -path \"$env:ProgramFiles\\elasticsearch-1.3.1\\config\\elasticsearch.yml\" -pattern \"cloud:\" -allmatches -simplematch -quiet }",
-          "SetScript": "Add-Content \"$env:ProgramFiles\\elasticsearch-1.3.1\\config\\elasticsearch.yml\" \"`ncloud:`n`tazure:`n`t`tkeystore: C:/Setup/azurecert.pfx`n`t`tpassword: {{AzureCertificatePassword}}`n`t`tsubscription_id: {{AzureSubscriptionId}}`n`t`tservice_name: {{CloudService}}\"\r\n if( \"{{StorageAccountKey}}\"){ Add-Content \"$env:ProgramFiles\\elasticsearch-1.3.1\\config\\elasticsearch.yml\" \"`t`tstorage_account: {{DiskStore}}`n`t`tstorage_key: {{StorageAccountKey}}\"}",
-          "TestScript": "if (Select-String -path \"$env:ProgramFiles\\elasticsearch-1.3.1\\config\\elasticsearch.yml\" -pattern \"cloud:\" -allmatches -simplematch -quiet)\r\n{Write-Verbose \"Elastic Search Config already has Cloud settings\" -Verbose\r\nreturn $true}\r\nreturn $false",
-          "Type": "Script",
-          "ImportModule": null,
-          "ImportTypeName": null,
+          "GetArgs": "-configPath \"$env:ProgramFiles\\elasticsearch-1.3.1\\config\\elasticsearch.yml\"",
+          "SetArgs": "-configPath \"$env:ProgramFiles\\elasticsearch-1.3.1\\config\\elasticsearch.yml\" -certPath C:/Setup/azurecert.pfx -certPassword \"{{AzureCertificatePassword}}\" -subscriptionId {{AzureSubscriptionId}} -serviceName {{CloudService}} -StorageAccountKey {{StorageAccountKey}} -storageAccount {{DiskStore}}",
+          "TestArgs": "-configPath \"$env:ProgramFiles\\elasticsearch-1.3.1\\config\\elasticsearch.yml\"",
+          "Type": "ScriptFile",
+          "ScriptFileName": "UpdateConfigCloud.ps1",
           "Name": "UpdateConfigCloud",
-          "Args": {},
           "Nodes": [],
           "Requires": [
             "[Script]InstallPluginAzure"
@@ -509,38 +507,6 @@
           "Nodes": [],
           "Requires": [
             "[Script]InstallPluginAzure"
-          ],
-          "Description": null
-        },
-        {
-          "Credential": "vmadmin",
-          "GetScript": "return @{ Configured = Select-String -path \"$env:ProgramFiles\\elasticsearch-1.3.1\\config\\elasticsearch.yml\" -pattern \"^\\s*bootstrap.mlockall\" -allmatches -simplematch -quiet }",
-          "SetScript": "Add-Content \"$env:ProgramFiles\\elasticsearch-1.3.1\\config\\elasticsearch.yml\" \"`nbootstrap.mlockall: true\"",
-          "TestScript": "if (Select-String -path \"$env:ProgramFiles\\elasticsearch-1.3.1\\config\\elasticsearch.yml\" -pattern \"^\\s*bootstrap.mlockall:\" -allmatches -simplematch -quiet)\r\n{Write-Verbose \"Elastic Search Config already configured to never swap\" -Verbose\r\nreturn $true}\r\nreturn $false",
-          "Type": "Script",
-          "ImportModule": null,
-          "ImportTypeName": null,
-          "Name": "UpdateConfigMemory",
-          "Args": {},
-          "Nodes": [],
-          "Requires": [
-            "[Script]UpdateConfigDiscovery"
-          ],
-          "Description": null
-        },
-        {
-          "Credential": "vmadmin",
-          "GetScript": "return @{ Max = $env:ES_MAX_MEM; Min = $env:ES_MIN_MEM}",
-          "SetScript": "$mem = Get-WmiObject -Class Win32_ComputerSystem \r\n$es_mem = [int]$($mem.TotalPhysicalMemory/2mb) \r\n [Environment]::SetEnvironmentVariable(\"ES_MAX_MEM\",\"$($es_mem)M\",\"Machine\") \r\n [Environment]::SetEnvironmentVariable(\"ES_MIN_MEM\",\"$($es_mem)M\",\"Machine\")",
-          "TestScript": "if ($env:ES_MAX_MEM)\r\n{Write-Verbose \"ES_MAX_MEM: $($env:ES_MAX_MEM)Mb & ES_MIN_MEM: $($env:ES_MIN_MEM)Mb\" -Verbose\r\nreturn $true}\r\nreturn $false",
-          "Type": "Script",
-          "ImportModule": null,
-          "ImportTypeName": null,
-          "Name": "SetJvmMemory",
-          "Args": {},
-          "Nodes": [],
-          "Requires": [
-            "[Script]UpdateConfigDiscovery"
           ],
           "Description": null
         },
