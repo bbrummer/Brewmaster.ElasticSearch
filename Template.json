@@ -201,7 +201,7 @@
       "Description": "Elastic Search Server",
       "Endpoints": [
         {
-          "Name": "HTTP",
+          "Name": "HTTPES",
           "LocalPort": 9200,
           "Protocol": "tcp",
           "Port": 9200,
