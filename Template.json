@@ -208,7 +208,7 @@
           "EnableDirectServerReturn": false,
           "Rules": [],
           "LoadBalancerProbe": {
-            "Name": "http",
+            "Name": "httpes",
             "Protocol": "Http",
             "Path": "/",
             "IntervalInSeconds": 15,
