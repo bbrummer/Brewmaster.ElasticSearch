@@ -274,15 +274,10 @@
         },
         {
           "Credential": "vmadmin",
-          "GetScript": "return @{ Downloaded = Test-Path -LiteralPath \"C:\\setup\\jdk1.8.0_11.zip\" -PathType Leaf }",
-          "SetScript": "Write-Verbose \"Downloading JRE. This can take around 20 mins.\" -Verbose\r\nInvoke-WebRequest 'http://apselasticsearchdev.blob.core.windows.net/brewmasterinstallers/jdk1.8.0_11.zip' -OutFile \"C:\\setup\\jdk1.8.0_11.zip\"",
-          "TestScript": "if (Test-Path -LiteralPath \"C:\\setup\\jdk1.8.0_11.zip\" -PathType Leaf)\r\n{Write-Verbose \"C:\\setup\\jdk1.8.0_11.zip already exists.\" -Verbose\r\nreturn $true}\r\nreturn $false",
-          "Type": "Script",
-          "ImportModule": null,
-          "ImportTypeName": null,
+          "Args": "-diskPath \"C:\\setup\\jdk1.8.0_11.zip\" -downloadUrl \"http://apselasticsearchdev.blob.core.windows.net/brewmasterinstallers/jdk1.8.0_11.zip\"",
+          "Type": "ScriptFile",
+          "ScriptFileName": "DownloadFile.ps1",
           "Name": "DownloadJRE",
-          "Args": {},
-          "Nodes": [],
           "Requires": [
             "[File]SetupFolder"
           ],
@@ -290,15 +285,10 @@
         },
         {
           "Credential": "vmadmin",
-          "GetScript": "return @{ Downloaded = Test-Path -LiteralPath \"C:\\setup\\elasticsearch-1.3.1.zip\" -PathType Leaf }",
-          "SetScript": "Invoke-WebRequest 'https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.3.1.zip' -OutFile \"C:\\setup\\elasticsearch-1.3.1.zip\"",
-          "TestScript": "if (Test-Path -LiteralPath \"C:\\setup\\elasticsearch-1.3.1.zip\" -PathType Leaf)\r\n{Write-Verbose \"C:\\setup\\elasticsearch-1.3.1.zip already exists.\" -Verbose\r\nreturn $true}\r\nreturn $false",
-          "Type": "Script",
-          "ImportModule": null,
-          "ImportTypeName": null,
+          "Args": "-diskPath \"C:\\setup\\elasticsearch-1.3.1.zip\" -downloadUrl 'https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.3.1.zip'",
+          "Type": "ScriptFile",
+          "ScriptFileName": "DownloadFile.ps1",
           "Name": "DownloadElasticSearch",
-          "Args": {},
-          "Nodes": [],
           "Requires": [
             "[File]SetupFolder"
           ],
@@ -306,15 +296,10 @@
         },
         {
           "Credential": "vmadmin",
-          "GetScript": "return @{ Downloaded = Test-Path -LiteralPath \"C:\\setup\\elasticsearch-head-master.zip\" -PathType Leaf }",
-          "SetScript": "Invoke-WebRequest 'https://github.com/mobz/elasticsearch-head/archive/master.zip' -OutFile \"C:\\setup\\elasticsearch-head-master.zip\"",
-          "TestScript": "if (Test-Path -LiteralPath \"C:\\setup\\elasticsearch-head-master.zip\" -PathType Leaf)\r\n{Write-Verbose \"C:\\setup\\elasticsearch-head-master.zip already exists.\" -Verbose\r\nreturn $true}\r\nreturn $false",
-          "Type": "Script",
-          "ImportModule": null,
-          "ImportTypeName": null,
+          "Args": "-diskPath \"C:\\setup\\elasticsearch-head-master.zip\" -downloadUrl 'https://github.com/mobz/elasticsearch-head/archive/master.zip'",
+          "Type": "ScriptFile",
+          "ScriptFileName": "DownloadFile.ps1",
           "Name": "DownloadPluginHead",
-          "Args": {},
-          "Nodes": [],
           "Requires": [
             "[File]SetupFolder"
           ],
@@ -322,15 +307,10 @@
         },
         {
           "Credential": "vmadmin",
-          "GetScript": "return @{ Downloaded = Test-Path -LiteralPath \"C:\\setup\\elasticsearch-cloud-azure-2.2.0.zip\" -PathType Leaf }",
-          "SetScript": "Invoke-WebRequest 'http://download.elasticsearch.org/elasticsearch/elasticsearch-cloud-azure/elasticsearch-cloud-azure-2.2.0.zip' -OutFile \"C:\\setup\\elasticsearch-cloud-azure-2.2.0.zip\"",
-          "TestScript": "if (Test-Path -LiteralPath \"C:\\setup\\elasticsearch-cloud-azure-2.2.0.zip\" -PathType Leaf)\r\n{Write-Verbose \"C:\\setup\\elasticsearch-cloud-azure-2.2.0.zip already exists.\" -Verbose\r\nreturn $true}\r\nreturn $false",
-          "Type": "Script",
-          "ImportModule": null,
-          "ImportTypeName": null,
+          "Args": "-diskPath \"C:\\setup\\elasticsearch-cloud-azure-2.2.0.zip\" -downloadUrl 'http://download.elasticsearch.org/elasticsearch/elasticsearch-cloud-azure/elasticsearch-cloud-azure-2.2.0.zip'",
+          "Type": "ScriptFile",
+          "ScriptFileName": "DownloadFile.ps1",
           "Name": "DownloadPluginAzure",
-          "Args": {},
-          "Nodes": [],
           "Requires": [
             "[File]SetupFolder"
           ],
@@ -338,15 +318,10 @@
         },
         {
           "Credential": "vmadmin",
-          "GetScript": "return @{ Downloaded = Test-Path -LiteralPath \"C:\\setup\\azurecert.pfx\" -PathType Leaf }",
-          "SetScript": "Invoke-WebRequest '{{AzureCertificateUrl}}' -OutFile \"C:\\setup\\azurecert.pfx\"",
-          "TestScript": "if (Test-Path -LiteralPath \"C:\\setup\\azurecert.pfx\" -PathType Leaf)\r\n{Write-Verbose \"C:\\setup\\azurecert.pfx already exists.\" -Verbose\r\nreturn $true}\r\nreturn $false",
-          "Type": "Script",
-          "ImportModule": null,
-          "ImportTypeName": null,
+          "Args": "-diskPath \"C:\\setup\\azurecert.pfx\" -downloadUrl '{{AzureCertificateUrl}}'",
+          "Type": "ScriptFile",
+          "ScriptFileName": "DownloadFile.ps1",
           "Name": "DownloadCertificate",
-          "Args": {},
-          "Nodes": [],
           "Requires": [
             "[File]SetupFolder"
           ],
@@ -354,15 +329,12 @@
         },
         {
           "Type": "Archive",
-          "ImportModule": null,
-          "ImportTypeName": null,
           "Name": "UnpackJRE",
           "Args": {
             "Path": "C:\\setup\\jdk1.8.0_11.zip",
             "Destination": "%ProgramFiles%",
             "Ensure": "Present"
           },
-          "Nodes": [],
           "Requires": [
             "[Script]DownloadJRE"
           ],
