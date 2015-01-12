@@ -76,14 +76,6 @@
       "Maximum": 127.0
     },
     {
-      "Name": "AzureSubscriptionId",
-      "Type": "String",
-      "TypeHint": "Guid",
-      "Description": "Subscription Id.",
-      "Minimum": 8.0,
-      "Maximum": 127.0
-    },
-    {
       "Name": "NumberOfElasticSearchServers",
       "Type": "Number",
       "TypeHint": "integer",
@@ -476,13 +468,13 @@
         {
           "Credential": "vmadmin",
           "GetScript": "return @{ Configured = Select-String -path \"$env:ProgramFiles\\elasticsearch-1.3.1\\config\\elasticsearch.yml\" -pattern \"cloud:\" -allmatches -simplematch -quiet }",
-          "SetScript": "Add-Content \"$env:ProgramFiles\\elasticsearch-1.3.1\\config\\elasticsearch.yml\" \"`ncloud:`n`tazure:`n`t`tkeystore: C:/Setup/azurecert.pfx`n`t`tpassword: {{AzureCertificatePassword}}`n`t`tsubscription_id: {{AzureSubscriptionId}}`n`t`tservice_name: {{CloudService}}`n`t\"",
+          "SetScript": "Add-Content \"$env:ProgramFiles\\elasticsearch-1.3.1\\config\\elasticsearch.yml\" \"`ncloud:`n`tazure:`n`t`tkeystore: C:/Setup/azurecert.pfx`n`t`tpassword: {{AzureCertificatePassword}}`n`t`tsubscription_id: $AzureSubId`n`t`tservice_name: {{CloudService}}`n`t\"",
           "TestScript": "if (Select-String -path \"$env:ProgramFiles\\elasticsearch-1.3.1\\config\\elasticsearch.yml\" -pattern \"cloud:\" -allmatches -simplematch -quiet)\r\n{Write-Verbose \"Elastic Search Config already has Cloud settings\" -Verbose\r\nreturn $true}\r\nreturn $false",
           "Type": "Script",
           "ImportModule": null,
           "ImportTypeName": null,
           "Name": "UpdateConfigCloud",
-          "Args": {},
+          "Args": {"AzureSubId": "Env.AzureSubscription.Id"},
           "Nodes": [],
           "Requires": [
             "[Script]InstallPluginAzure"
