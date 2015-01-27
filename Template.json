@@ -76,21 +76,6 @@
       "Maximum": 127.0
     },
     {
-      "Name": "AzureSubscriptionId",
-      "Type": "String",
-      "TypeHint": "Guid",
-      "Description": "Subscription Id.",
-      "Minimum": 8.0,
-      "Maximum": 127.0
-    },
-    {
-      "Name": "StorageAccountKey",
-      "Type": "String",
-      "TypeHint": "string",
-      "Description": "Storage account key. Used by Azure plugin for ES snapshots",
-      "Default": ""
-    },
-    {
       "Name": "NumberOfElasticSearchServers",
       "Type": "Number",
       "TypeHint": "integer",
@@ -482,7 +467,7 @@
         },
         {
           "Credential": "vmadmin",
-          "Args": "-configPath \"$env:ProgramFiles\\elasticsearch-1.3.1\\config\\elasticsearch.yml\" -certPath C:/Setup/azurecert.pfx -certPassword \"{{AzureCertificatePassword}}\" -subscriptionId {{AzureSubscriptionId}} -serviceName {{CloudService}} -StorageAccountKey {{StorageAccountKey}} -storageAccount {{DiskStore}}",
+          "Args": "-configPath \"$env:ProgramFiles\\elasticsearch-1.3.1\\config\\elasticsearch.yml\" -certPath C:/Setup/azurecert.pfx -certPassword \"{{AzureCertificatePassword}}\" -subscriptionId Env.AzureSubscription.Id -serviceName {{CloudService}} -StorageAccountKey Env.StorageAccounts.{{DiskStore}}.PrimaryKey -storageAccount {{DiskStore}}",
           "Type": "ScriptFile",
           "ScriptFileName": "UpdateConfigCloud.ps1",
           "Name": "UpdateConfigCloud",
